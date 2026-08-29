@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#101010">
-<title>Excavator Trainer V6 — Touch Assist</title>
+<title>Excavator Trainer V6.1 — Direction Fix</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#0d0d0d;--panel:#171717;--line:#393939;--text:#f6f6f6;--muted:#aaa;--yellow:#f1b500;--good:#3ac77c;--bad:#ef5350}
@@ -58,7 +58,7 @@ canvas{display:block;width:100%;height:auto}
 </style>
 </head>
 <body>
-<header><h1>EXCAVATOR TRAINER</h1><span class="badge">V6 · TOUCH ASSIST</span></header>
+<header><h1>EXCAVATOR TRAINER</h1><span class="badge">V6.1 · DIRECTION FIX</span></header>
 <main>
 <div class="layout">
 <section class="card">
@@ -117,7 +117,7 @@ canvas{display:block;width:100%;height:auto}
     <button class="action primary" id="restart">Restart verification</button>
     <button class="action" id="labels">Hide machine labels</button>
   </div>
-  <div class="note"><b>Touch Assist:</b> put your thumb anywhere inside either large control area and slide. You do <b>not</b> have to grab the handle. The visible stalk tilts like the real joystick, while direction assist snaps your movement to forward/back/left/right unless you deliberately push diagonally.</div>
+  <div class="note"><b>Touch Assist:</b> put your thumb anywhere inside either large control area and slide. You do <b>not</b> have to grab the handle. The visible stalk now follows your thumb in the SAME direction: slide right → joystick leans right; slide left → joystick leans left. Direction assist still snaps slightly imperfect movements to the intended axis.</div>
 </div></aside>
 </div>
 </main>
@@ -187,7 +187,7 @@ function bind(id,prefix,liveId){
    else if(ay > ax*1.28) sx=0;
 
    const rx=(sy/lim)*22;
-   const rz=-(sx/lim)*20;
+   const rz=(sx/lim)*20;
    stalk.style.transform=`translateX(-50%) rotateX(${rx}deg) rotateZ(${rz}deg)`;
 
    let code=null;
