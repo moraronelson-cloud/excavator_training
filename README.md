@@ -1,29 +1,29 @@
-# Excavator Trainer V5 — Literal Joysticks
+# Excavator Trainer V6 — Touch Assist
 
-This version intentionally rebuilds the controls instead of patching the round touch pads.
+Cumulative replacement for V5.
 
-## What changed
-- Two visible, real-style joystick stalks with handles and console bases.
-- User physically drags the joystick toward:
-  - WINDSHIELD / FORWARD
-  - SEAT / BACK
-  - LEFT
-  - RIGHT
-- Each movement immediately states the command being interpreted.
-- Eight-direction verification must be passed before digging unlocks.
-- Visual excavator response is separated from the control interpretation so mapping errors are easier to detect.
+## Main change
+The controls now behave like real joysticks but are much easier to use on a phone:
+- touch anywhere inside the large left/right joystick zone
+- slide your thumb forward, back, left, or right
+- no need to grab the small visual handle
+- the joystick stalk still visibly tilts like a real cab joystick
+- direction assist snaps slightly imperfect thumb movements to the intended main axis
+- a thumb marker shows what your finger is doing
 
-## ISO mapping used
-LEFT:
-- Forward toward windshield = stick OUT
-- Back toward seat = stick IN
-- Left = swing LEFT
-- Right = swing RIGHT
+## Control verification
+The app still verifies all 8 ISO joystick directions before unlocking the next stage.
 
-RIGHT:
-- Forward toward windshield = boom DOWN
-- Back toward seat = boom UP
-- Left = bucket CURL
-- Right = bucket DUMP
+ISO mapping used:
+LEFT
+- forward toward windshield = stick OUT
+- back toward seat = stick IN
+- left/right = swing left/right
 
-This matches the common ISO excavator pattern. Actual machine configuration still must be verified from its cab decal/operator manual before real-machine practice.
+RIGHT
+- forward toward windshield = boom DOWN
+- back toward seat = boom UP
+- left = bucket CURL
+- right = bucket DUMP
+
+Training aid only. Verify the actual machine's control-pattern decal/manual before supervised real-machine practice.

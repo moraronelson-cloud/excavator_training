@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#101010">
-<title>Excavator Trainer V5 — Literal Joysticks</title>
+<title>Excavator Trainer V6 — Touch Assist</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#0d0d0d;--panel:#171717;--line:#393939;--text:#f6f6f6;--muted:#aaa;--yellow:#f1b500;--good:#3ac77c;--bad:#ef5350}
@@ -23,13 +23,28 @@ canvas{display:block;width:100%;height:auto}
 .fail{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#000b;z-index:10}.fail.show{display:flex}.fail span{font-size:120px;color:var(--bad);font-weight:950}
 .joystickDeck{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 10px 10px;border-top:1px solid var(--line)}
 .joyUnit{text-align:center;min-width:0}.joyName{font-size:14px;font-weight:950;margin-bottom:6px}
-.joyFrame{position:relative;width:min(210px,44vw);height:min(220px,48vw);margin:auto;touch-action:none;user-select:none}
-.console{position:absolute;left:10%;right:10%;bottom:0;height:53%;background:linear-gradient(#444,#222);border:2px solid #5a5a5a;border-radius:25px 25px 16px 16px}
-.boot{position:absolute;left:50%;bottom:39%;width:62px;height:52px;transform:translateX(-50%);border-radius:50%;background:#222;border:5px solid #555}
-.stalk{position:absolute;left:50%;bottom:48%;width:20px;height:86px;transform-origin:50% 95%;transform:translateX(-50%);background:linear-gradient(90deg,#282828,#696969,#222);border-radius:10px}
-.handle{position:absolute;left:50%;top:-22px;width:55px;height:62px;transform:translateX(-50%);background:linear-gradient(90deg,#333,#666,#292929);border:2px solid #777;border-radius:18px 18px 14px 14px}
-.direction{position:absolute;font-size:10px;font-weight:900;color:#bbb;pointer-events:none}.front{top:0;left:50%;transform:translateX(-50%)}.seat{bottom:1px;left:50%;transform:translateX(-50%)}.dl{left:0;top:48%}.dr{right:0;top:48%}
-.live{margin-top:4px;min-height:34px;font-size:11px;color:#ddd}.live b{color:var(--yellow)}
+.joyFrame{
+  position:relative;
+  width:min(260px,46vw);
+  height:min(235px,46vw);
+  margin:auto;
+  touch-action:none;
+  user-select:none;
+  border:2px solid #505050;
+  border-radius:28px;
+  background:radial-gradient(circle at 50% 58%,#303030 0,#1c1c1c 62%,#131313 100%);
+  box-shadow:inset 0 0 0 1px #222;
+}
+.joyFrame.active{border-color:var(--yellow)}
+.touchHint{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding-bottom:7px;font-size:10px;color:#777;pointer-events:none}
+.console{position:absolute;left:26%;right:26%;bottom:12%;height:42%;background:linear-gradient(#454545,#222);border:2px solid #5a5a5a;border-radius:24px 24px 16px 16px;pointer-events:none}
+.boot{position:absolute;left:50%;bottom:39%;width:66px;height:54px;transform:translateX(-50%);border-radius:50%;background:#202020;border:5px solid #555;pointer-events:none}
+.stalk{position:absolute;left:50%;bottom:47%;width:20px;height:88px;transform-origin:50% 95%;transform:translateX(-50%);background:linear-gradient(90deg,#282828,#696969,#222);border-radius:10px;pointer-events:none;transition:transform .05s linear}
+.handle{position:absolute;left:50%;top:-22px;width:58px;height:64px;transform:translateX(-50%);background:linear-gradient(90deg,#333,#666,#292929);border:2px solid #777;border-radius:18px 18px 14px 14px}
+.direction{position:absolute;font-size:10px;font-weight:900;color:#bbb;pointer-events:none}.front{top:7px;left:50%;transform:translateX(-50%)}.seat{bottom:24px;left:50%;transform:translateX(-50%)}.dl{left:8px;top:48%}.dr{right:8px;top:48%}
+.thumbDot{position:absolute;width:58px;height:58px;border-radius:50%;background:#f1b50033;border:2px solid #f1b500;left:50%;top:58%;transform:translate(-50%,-50%);opacity:0;pointer-events:none}
+.joyFrame.active .thumbDot{opacity:1}
+.live{margin-top:5px;min-height:34px;font-size:11px;color:#ddd}.live b{color:var(--yellow)}
 .title{font-size:21px;font-weight:950}.sub{font-size:13px;color:var(--muted);margin-top:3px}
 .goal{margin-top:10px;background:#101010;border:1px solid #343434;border-radius:10px;padding:10px;line-height:1.42}.goal strong{color:var(--yellow)}
 .status{margin-top:10px;background:#101010;border:1px solid #333;border-radius:10px;padding:10px;line-height:1.4;font-size:13px;min-height:62px}
@@ -43,7 +58,7 @@ canvas{display:block;width:100%;height:auto}
 </style>
 </head>
 <body>
-<header><h1>EXCAVATOR TRAINER</h1><span class="badge">V5 · LITERAL JOYSTICKS</span></header>
+<header><h1>EXCAVATOR TRAINER</h1><span class="badge">V6 · TOUCH ASSIST</span></header>
 <main>
 <div class="layout">
 <section class="card">
@@ -64,6 +79,7 @@ canvas{display:block;width:100%;height:auto}
         <span class="direction front">WINDSHIELD / FORWARD</span><span class="direction seat">SEAT / BACK</span>
         <span class="direction dl">← LEFT</span><span class="direction dr">RIGHT →</span>
         <div class="console"></div><div class="boot"></div><div class="stalk"><div class="handle"></div></div>
+        <div class="thumbDot"></div><div class="touchHint">Touch anywhere & slide</div>
       </div>
       <div class="live" id="leftLive">Centered</div>
     </div>
@@ -74,6 +90,7 @@ canvas{display:block;width:100%;height:auto}
         <span class="direction front">WINDSHIELD / FORWARD</span><span class="direction seat">SEAT / BACK</span>
         <span class="direction dl">← LEFT</span><span class="direction dr">RIGHT →</span>
         <div class="console"></div><div class="boot"></div><div class="stalk"><div class="handle"></div></div>
+        <div class="thumbDot"></div><div class="touchHint">Touch anywhere & slide</div>
       </div>
       <div class="live" id="rightLive">Centered</div>
     </div>
@@ -90,7 +107,7 @@ canvas{display:block;width:100%;height:auto}
     <div class="stat"><b id="errors">0</b><span class="small">Fails</span></div>
     <div class="stat"><b id="stepNum">1/8</b><span class="small">Control</span></div>
   </div>
-  <div class="status" id="status"><span class="yellow"><b>Important:</b></span> Ignore the excavator for one moment. Physically drag the joystick handle toward the word WINDSHIELD.</div>
+  <div class="status" id="status"><span class="yellow"><b>Important:</b></span> Ignore the excavator for one moment. Touch anywhere in the LEFT joystick area and slide your thumb toward WINDSHIELD.</div>
 
   <div class="map">
     <div><b>LEFT STICK</b><br>Forward = stick OUT<br>Back = stick IN<br>Left/right = swing</div>
@@ -100,7 +117,7 @@ canvas{display:block;width:100%;height:auto}
     <button class="action primary" id="restart">Restart verification</button>
     <button class="action" id="labels">Hide machine labels</button>
   </div>
-  <div class="note"><b>Why this version is different:</b> no round gamepad control. You drag a visible joystick stalk as if your hand were on the cab joystick. “Forward” always means toward the windshield; “back” always means toward your seat.</div>
+  <div class="note"><b>Touch Assist:</b> put your thumb anywhere inside either large control area and slide. You do <b>not</b> have to grab the handle. The visible stalk tilts like the real joystick, while direction assist snaps your movement to forward/back/left/right unless you deliberately push diagonally.</div>
 </div></aside>
 </div>
 </main>
@@ -146,28 +163,63 @@ function command(code){
  }
 }
 function bind(id,prefix,liveId){
- const el=$(id),stalk=el.querySelector('.stalk'),live=$(liveId);let pid=null,fired=false;
+ const el=$(id),stalk=el.querySelector('.stalk'),live=$(liveId),dot=el.querySelector('.thumbDot');
+ let pid=null,startX=0,startY=0,fired=false;
+
  function move(e){
    if(pid===null)return;
-   const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height*.53;
-   let dx=e.clientX-cx,dy=e.clientY-cy;
-   const limX=r.width*.22,limY=r.height*.20;
-   dx=Math.max(-limX,Math.min(limX,dx));dy=Math.max(-limY,Math.min(limY,dy));
-   const rx=(dy/limY)*20,rz=-(dx/limX)*18;
+   let dx=e.clientX-startX,dy=e.clientY-startY;
+   const r=el.getBoundingClientRect();
+   const lim=Math.min(r.width,r.height)*.30;
+   const mag=Math.hypot(dx,dy);
+   if(mag>lim){dx*=lim/mag;dy*=lim/mag}
+
+   // Thumb marker follows the user's real finger movement.
+   dot.style.left=(50 + dx/r.width*100)+'%';
+   dot.style.top=(58 + dy/r.height*100)+'%';
+
+   // Direction assist:
+   // If one axis is clearly dominant, snap to that axis.
+   // This makes phone input forgiving while still teaching the real motion.
+   let sx=dx,sy=dy;
+   const ax=Math.abs(dx), ay=Math.abs(dy);
+   if(ax > ay*1.28) sy=0;
+   else if(ay > ax*1.28) sx=0;
+
+   const rx=(sy/lim)*22;
+   const rz=-(sx/lim)*20;
    stalk.style.transform=`translateX(-50%) rotateX(${rx}deg) rotateZ(${rz}deg)`;
+
    let code=null;
-   if(Math.abs(dx)>Math.abs(dy)){
-     if(Math.abs(dx)>limX*.48)code=prefix+(dx<0?'LEFT':'RIGHT');
-   } else if(Math.abs(dy)>limY*.48){
-     code=prefix+(dy<0?'FORWARD':'BACK');
+   const trigger=lim*.33;
+   if(Math.abs(sx)>Math.abs(sy)){
+     if(Math.abs(sx)>trigger) code=prefix+(sx<0?'LEFT':'RIGHT');
+   }else{
+     if(Math.abs(sy)>trigger) code=prefix+(sy<0?'FORWARD':'BACK');
    }
-   live.innerHTML=code?'<b>'+meaning[code]+'</b>':'Centered';
+
+   live.innerHTML=code?'<b>'+meaning[code]+'</b>':'Move farther';
    if(code&&!fired){fired=true;command(code)}
  }
- el.addEventListener('pointerdown',e=>{pid=e.pointerId;fired=false;el.setPointerCapture(pid);move(e)});
+
+ el.addEventListener('pointerdown',e=>{
+   pid=e.pointerId;fired=false;startX=e.clientX;startY=e.clientY;
+   el.setPointerCapture(pid);el.classList.add('active');
+   dot.style.left='50%';dot.style.top='58%';
+   live.textContent='Slide your thumb';
+ });
  el.addEventListener('pointermove',move);
- function end(e){if(e.pointerId!==pid)return;pid=null;fired=false;stalk.style.transform='translateX(-50%)';live.textContent='Centered'}
- el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+
+ function end(e){
+   if(e.pointerId!==pid)return;
+   pid=null;fired=false;
+   el.classList.remove('active');
+   stalk.style.transform='translateX(-50%)';
+   dot.style.left='50%';dot.style.top='58%';
+   live.textContent='Centered';
+ }
+ el.addEventListener('pointerup',end);
+ el.addEventListener('pointercancel',end);
 }
 bind('leftJoy','L_','leftLive');bind('rightJoy','R_','rightLive');
 $('restart').onclick=()=>{idx=correct=errors=0;locked=false;$('taskTab').disabled=true;$('taskTab').textContent='2. Dig task 🔒';$('status').innerHTML='<span class="yellow"><b>Restarted.</b></span> Push the left joystick physically toward WINDSHIELD.';render()};
