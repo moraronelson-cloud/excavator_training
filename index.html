@@ -3,263 +3,319 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#101010">
-<title>Excavator Trainer V6.1 — Direction Fix</title>
+<meta name="theme-color" content="#0b0b0b">
+<title>Excavator Trainer V7 — Realistic Hydraulics</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
-:root{--bg:#0d0d0d;--panel:#171717;--line:#393939;--text:#f6f6f6;--muted:#aaa;--yellow:#f1b500;--good:#3ac77c;--bad:#ef5350}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Arial,sans-serif;overscroll-behavior:none}
-header{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:#111}
-h1{font-size:16px;margin:0}.badge{font-size:11px;font-weight:900;background:var(--yellow);color:#111;padding:5px 8px;border-radius:999px}
-main{max-width:1180px;margin:auto;padding:10px}.layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,.55fr);gap:10px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden}.pad{padding:12px}
-.tabs{display:flex;gap:6px;overflow:auto;padding:8px 10px;border-bottom:1px solid var(--line)}
-.tabs button{white-space:nowrap;background:#262626;color:#ddd;border:1px solid #454545;border-radius:9px;padding:9px 11px;font-weight:850}
-.tabs button.active{background:var(--yellow);color:#111;border-color:var(--yellow)}
-.tabs button:disabled{opacity:.4}
-.scene{position:relative;background:#94c7d9}
-canvas{display:block;width:100%;height:auto}
-.fail{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#000b;z-index:10}.fail.show{display:flex}.fail span{font-size:120px;color:var(--bad);font-weight:950}
-.joystickDeck{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 10px 10px;border-top:1px solid var(--line)}
-.joyUnit{text-align:center;min-width:0}.joyName{font-size:14px;font-weight:950;margin-bottom:6px}
-.joyFrame{
-  position:relative;
-  width:min(260px,46vw);
-  height:min(235px,46vw);
-  margin:auto;
-  touch-action:none;
-  user-select:none;
-  border:2px solid #505050;
-  border-radius:28px;
-  background:radial-gradient(circle at 50% 58%,#303030 0,#1c1c1c 62%,#131313 100%);
-  box-shadow:inset 0 0 0 1px #222;
+:root{
+  --bg:#080808;--panel:#121212;--panel2:#191919;--line:#303030;--text:#f7f7f7;--muted:#aaa;
+  --yellow:#f3b200;--yellow2:#d99500;--good:#45d07f;--bad:#ef5350;--blue:#4ea5ff;
 }
-.joyFrame.active{border-color:var(--yellow)}
-.touchHint{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding-bottom:7px;font-size:10px;color:#777;pointer-events:none}
-.console{position:absolute;left:26%;right:26%;bottom:12%;height:42%;background:linear-gradient(#454545,#222);border:2px solid #5a5a5a;border-radius:24px 24px 16px 16px;pointer-events:none}
-.boot{position:absolute;left:50%;bottom:39%;width:66px;height:54px;transform:translateX(-50%);border-radius:50%;background:#202020;border:5px solid #555;pointer-events:none}
-.stalk{position:absolute;left:50%;bottom:47%;width:20px;height:88px;transform-origin:50% 95%;transform:translateX(-50%);background:linear-gradient(90deg,#282828,#696969,#222);border-radius:10px;pointer-events:none;transition:transform .05s linear}
-.handle{position:absolute;left:50%;top:-22px;width:58px;height:64px;transform:translateX(-50%);background:linear-gradient(90deg,#333,#666,#292929);border:2px solid #777;border-radius:18px 18px 14px 14px}
-.direction{position:absolute;font-size:10px;font-weight:900;color:#bbb;pointer-events:none}.front{top:7px;left:50%;transform:translateX(-50%)}.seat{bottom:24px;left:50%;transform:translateX(-50%)}.dl{left:8px;top:48%}.dr{right:8px;top:48%}
-.thumbDot{position:absolute;width:58px;height:58px;border-radius:50%;background:#f1b50033;border:2px solid #f1b500;left:50%;top:58%;transform:translate(-50%,-50%);opacity:0;pointer-events:none}
-.joyFrame.active .thumbDot{opacity:1}
-.live{margin-top:5px;min-height:34px;font-size:11px;color:#ddd}.live b{color:var(--yellow)}
-.title{font-size:21px;font-weight:950}.sub{font-size:13px;color:var(--muted);margin-top:3px}
-.goal{margin-top:10px;background:#101010;border:1px solid #343434;border-radius:10px;padding:10px;line-height:1.42}.goal strong{color:var(--yellow)}
-.status{margin-top:10px;background:#101010;border:1px solid #333;border-radius:10px;padding:10px;line-height:1.4;font-size:13px;min-height:62px}
-.good{color:var(--good)}.bad{color:var(--bad)}.yellow{color:var(--yellow)}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.stat{background:#101010;border:1px solid #303030;border-radius:9px;padding:8px;text-align:center}.stat b{display:block;font-size:18px}.small{font-size:11px;color:var(--muted)}
-.progress{height:9px;background:#333;border-radius:999px;overflow:hidden;margin:10px 0}.progress div{height:100%;background:var(--yellow);width:0}
-.row{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}button.action{background:#292929;color:#fff;border:1px solid #555;border-radius:9px;padding:9px 11px;font-weight:800}button.primary{background:var(--yellow);color:#111;border-color:var(--yellow)}
-.map{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:7px}.map div{background:#101010;border:1px solid #303030;border-radius:9px;padding:8px;font-size:11px;line-height:1.4}.map b{color:var(--yellow)}
-.note{border-left:3px solid var(--yellow);background:#211b0d;padding:9px;margin-top:10px;font-size:12px;line-height:1.4}
-@media(max-width:830px){.layout{grid-template-columns:1fr}.info{order:-1}.title{font-size:18px}.joystickDeck{gap:4px}.joyFrame{width:min(190px,46vw);height:min(205px,49vw)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Arial,sans-serif;overscroll-behavior:none}
+body{min-height:100vh}
+header{height:58px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #242424;background:#0d0d0d;position:sticky;top:0;z-index:20}
+header h1{font-size:17px;margin:0;font-weight:950;letter-spacing:.3px}
+.badge{background:var(--yellow);color:#111;padding:6px 9px;border-radius:10px;font-size:11px;font-weight:950}
+main{max-width:1180px;margin:auto;padding:10px}
+.topcard,.simcard,.controlCard{background:linear-gradient(#141414,#0f0f0f);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.topcard{padding:12px;margin-bottom:10px}
+.toprow{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.mode{font-size:16px;font-weight:950;color:var(--yellow)} .muted{color:var(--muted);font-size:12px;line-height:1.45}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.legend{background:#101010;border:1px solid #292929;border-radius:12px;padding:10px;font-size:12px;line-height:1.5}
+.legend b{color:var(--yellow)}
+.statusbox{background:#0f0f0f;border:1px solid #2d2d2d;border-radius:12px;padding:10px;font-size:12px;line-height:1.5}
+.statusbox strong{color:var(--good)}
+.simcard{margin-bottom:10px}
+.simhead{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px solid #282828;font-size:12px}
+.simhead b{color:var(--yellow)}
+canvas{display:block;width:100%;height:auto;background:#9cc6d7}
+.machinebar{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #292929;background:#101010}
+.metric{padding:9px 8px;text-align:center;border-right:1px solid #252525;font-size:11px;color:#aaa}.metric:last-child{border-right:0}.metric b{display:block;color:#fff;font-size:13px;margin-top:2px}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.controlCard{padding:10px}
+.controlTitle{text-align:center;font-size:14px;font-weight:950}.controlTitle span{display:block;font-size:11px;color:var(--yellow);margin-top:2px}
+.pad{
+  width:min(330px,44vw);height:min(330px,44vw);max-width:100%;margin:10px auto 4px;position:relative;
+  border-radius:50%;background:radial-gradient(circle at 50% 48%,#242424 0,#171717 58%,#0f0f0f 100%);
+  border:2px solid #3a3a3a;touch-action:none;user-select:none;box-shadow:inset 0 0 0 9px #111,0 10px 25px #0007;
+}
+.ring{position:absolute;inset:17%;border:2px solid #484848;border-radius:50%;pointer-events:none}
+.crossV,.crossH{position:absolute;background:#3b3b3b;pointer-events:none}.crossV{width:2px;height:60%;left:50%;top:20%}.crossH{height:2px;width:60%;left:20%;top:50%}
+.knob{position:absolute;width:31%;height:31%;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;
+ background:radial-gradient(circle at 42% 34%,#626262,#303030 52%,#161616 100%);border:3px solid #555;box-shadow:0 6px 14px #000b}
+.dir{position:absolute;font-size:10px;font-weight:900;color:#ddd;pointer-events:none;text-align:center}
+.up{top:5%;left:50%;transform:translateX(-50%)}.down{bottom:5%;left:50%;transform:translateX(-50%)}.left{left:3%;top:50%;transform:translateY(-50%)}.right{right:3%;top:50%;transform:translateY(-50%)}
+.pad.active{border-color:var(--blue);box-shadow:inset 0 0 0 9px #111,0 0 0 2px #1f70bb,0 10px 25px #0008}
+.live{text-align:center;min-height:32px;font-size:12px;color:#aaa}.live b{color:var(--good)}
+.bottom{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button{border:1px solid #444;background:#242424;color:#fff;border-radius:10px;padding:9px 12px;font-weight:850}
+button.primary{background:var(--yellow);color:#111;border-color:var(--yellow)}
+.tip{margin-top:10px;border-left:3px solid var(--yellow);background:#201a08;padding:9px 10px;font-size:12px;line-height:1.45}
+@media(max-width:760px){
+ main{padding:7px}.topcard{padding:10px}.toprow{display:block}.grid2{grid-template-columns:1fr 1fr;gap:6px}
+ .controls{gap:6px}.controlCard{padding:6px}.controlTitle{font-size:12px}
+ .pad{width:45vw;height:45vw;margin-top:6px}.dir{font-size:8px}
+ .machinebar{grid-template-columns:repeat(4,1fr)}.metric{font-size:9px;padding:7px 3px}.metric b{font-size:11px}
+}
 </style>
 </head>
 <body>
-<header><h1>EXCAVATOR TRAINER</h1><span class="badge">V6.1 · DIRECTION FIX</span></header>
+<header><h1>EXCAVATOR TRAINER</h1><span class="badge">V7 · REALISTIC HYDRAULICS</span></header>
+
 <main>
-<div class="layout">
-<section class="card">
-  <div class="tabs">
-    <button id="testTab" class="active">1. Verify controls</button>
-    <button id="taskTab" disabled>2. Dig task 🔒</button>
-    <button id="travelTab" disabled>3. Travel/position 🔒</button>
-  </div>
-  <div class="scene">
-    <canvas id="sim" width="900" height="455"></canvas>
-    <div class="fail" id="fail"><span>✕</span></div>
-  </div>
-
-  <div class="joystickDeck">
-    <div class="joyUnit">
-      <div class="joyName">LEFT REAL-STYLE JOYSTICK</div>
-      <div class="joyFrame" id="leftJoy">
-        <span class="direction front">WINDSHIELD / FORWARD</span><span class="direction seat">SEAT / BACK</span>
-        <span class="direction dl">← LEFT</span><span class="direction dr">RIGHT →</span>
-        <div class="console"></div><div class="boot"></div><div class="stalk"><div class="handle"></div></div>
-        <div class="thumbDot"></div><div class="touchHint">Touch anywhere & slide</div>
-      </div>
-      <div class="live" id="leftLive">Centered</div>
+<section class="topcard">
+  <div class="toprow">
+    <div>
+      <div class="mode">EXPLORE MODE</div>
+      <div class="muted">Move either joystick freely. The machine follows continuously and <b>holds its position when you release the control</b>.</div>
     </div>
+    <button class="primary" id="resetMachine">Reset machine</button>
+  </div>
+  <div class="grid2">
+    <div class="legend"><b>LEFT STICK</b><br>Forward = stick OUT<br>Back = stick IN<br>Left / Right = swing</div>
+    <div class="legend"><b>RIGHT STICK</b><br>Forward = boom DOWN<br>Back = boom UP<br>Left = bucket CURL<br>Right = bucket DUMP</div>
+  </div>
+  <div class="statusbox" id="status"><strong>Ready.</strong> Try curling the bucket, release the joystick, and watch it stay curled.</div>
+</section>
 
-    <div class="joyUnit">
-      <div class="joyName">RIGHT REAL-STYLE JOYSTICK</div>
-      <div class="joyFrame" id="rightJoy">
-        <span class="direction front">WINDSHIELD / FORWARD</span><span class="direction seat">SEAT / BACK</span>
-        <span class="direction dl">← LEFT</span><span class="direction dr">RIGHT →</span>
-        <div class="console"></div><div class="boot"></div><div class="stalk"><div class="handle"></div></div>
-        <div class="thumbDot"></div><div class="touchHint">Touch anywhere & slide</div>
-      </div>
-      <div class="live" id="rightLive">Centered</div>
-    </div>
+<section class="simcard">
+  <div class="simhead"><span><b>LIVE MACHINE</b> · side training view</span><span id="lastInput">No input</span></div>
+  <canvas id="sim" width="1100" height="560"></canvas>
+  <div class="machinebar">
+    <div class="metric">ENGINE<b>950 rpm</b></div>
+    <div class="metric">HYDRAULICS<b id="hyd">Neutral</b></div>
+    <div class="metric">BUCKET<b id="fill">0%</b></div>
+    <div class="metric">TRUCK<b id="truck">0.0 t</b></div>
   </div>
 </section>
 
-<aside class="card info"><div class="pad">
-  <div class="title" id="title">Control Verification</div>
-  <div class="sub">First make the simulator prove every joystick direction.</div>
-  <div class="goal" id="goal"><strong>DO THIS:</strong> Push the <b>LEFT joystick FORWARD toward the windshield</b>.</div>
-  <div class="progress"><div id="bar"></div></div>
-  <div class="stats">
-    <div class="stat"><b id="correct">0</b><span class="small">Correct</span></div>
-    <div class="stat"><b id="errors">0</b><span class="small">Fails</span></div>
-    <div class="stat"><b id="stepNum">1/8</b><span class="small">Control</span></div>
+<section class="controls">
+  <div class="controlCard">
+    <div class="controlTitle">LEFT JOYSTICK<span>Swing + Stick</span></div>
+    <div class="pad" id="leftPad">
+      <div class="ring"></div><div class="crossV"></div><div class="crossH"></div>
+      <div class="dir up">STICK OUT ↑</div><div class="dir down">↓ STICK IN</div>
+      <div class="dir left">← SWING LEFT</div><div class="dir right">SWING RIGHT →</div>
+      <div class="knob"></div>
+    </div>
+    <div class="live" id="leftLive">Centered</div>
   </div>
-  <div class="status" id="status"><span class="yellow"><b>Important:</b></span> Ignore the excavator for one moment. Touch anywhere in the LEFT joystick area and slide your thumb toward WINDSHIELD.</div>
 
-  <div class="map">
-    <div><b>LEFT STICK</b><br>Forward = stick OUT<br>Back = stick IN<br>Left/right = swing</div>
-    <div><b>RIGHT STICK</b><br>Forward = boom DOWN<br>Back = boom UP<br>Left = bucket CURL<br>Right = bucket DUMP</div>
+  <div class="controlCard">
+    <div class="controlTitle">RIGHT JOYSTICK<span>Boom + Bucket</span></div>
+    <div class="pad" id="rightPad">
+      <div class="ring"></div><div class="crossV"></div><div class="crossH"></div>
+      <div class="dir up">BOOM DOWN ↑</div><div class="dir down">↓ BOOM UP</div>
+      <div class="dir left">← BUCKET CURL</div><div class="dir right">BUCKET DUMP →</div>
+      <div class="knob"></div>
+    </div>
+    <div class="live" id="rightLive">Centered</div>
   </div>
-  <div class="row">
-    <button class="action primary" id="restart">Restart verification</button>
-    <button class="action" id="labels">Hide machine labels</button>
-  </div>
-  <div class="note"><b>Touch Assist:</b> put your thumb anywhere inside either large control area and slide. You do <b>not</b> have to grab the handle. The visible stalk now follows your thumb in the SAME direction: slide right → joystick leans right; slide left → joystick leans left. Direction assist still snaps slightly imperfect movements to the intended axis.</div>
-</div></aside>
+</section>
+
+<div class="bottom">
+  <button id="labels">Hide labels</button>
+  <button id="soilBtn">Refill soil</button>
 </div>
+<div class="tip"><b>Realistic behavior:</b> the joystick springs back to center when released, but the excavator attachment does not. Boom, stick, bucket and swing remain where you left them, just like hydraulic functions holding position.</div>
 </main>
 
 <script>
-const $=id=>document.getElementById(id),c=$('sim'),ctx=c.getContext('2d');
-let labels=true, idx=0,correct=0,errors=0,locked=false,lastCommand='',anim=null;
-const tests=[
- {want:'L_FORWARD',prompt:'Push the <b>LEFT joystick FORWARD toward the windshield</b>.',meaning:'STICK OUT',explain:'The stick/dipper extends away from the cab.'},
- {want:'L_BACK',prompt:'Pull the <b>LEFT joystick BACK toward your seat</b>.',meaning:'STICK IN',explain:'The stick/dipper comes toward the cab.'},
- {want:'L_LEFT',prompt:'Move the <b>LEFT joystick LEFT</b>.',meaning:'SWING LEFT',explain:'The upper structure swings left.'},
- {want:'L_RIGHT',prompt:'Move the <b>LEFT joystick RIGHT</b>.',meaning:'SWING RIGHT',explain:'The upper structure swings right.'},
- {want:'R_FORWARD',prompt:'Push the <b>RIGHT joystick FORWARD toward the windshield</b>.',meaning:'BOOM DOWN',explain:'The main boom lowers.'},
- {want:'R_BACK',prompt:'Pull the <b>RIGHT joystick BACK toward your seat</b>.',meaning:'BOOM UP',explain:'The main boom raises.'},
- {want:'R_LEFT',prompt:'Move the <b>RIGHT joystick LEFT</b>.',meaning:'BUCKET CURL',explain:'The bucket curls inward to scoop/hold material.'},
- {want:'R_RIGHT',prompt:'Move the <b>RIGHT joystick RIGHT</b>.',meaning:'BUCKET DUMP',explain:'The bucket opens outward to release material.'}
-];
-const meaning={
- L_FORWARD:'STICK OUT',L_BACK:'STICK IN',L_LEFT:'SWING LEFT',L_RIGHT:'SWING RIGHT',
- R_FORWARD:'BOOM DOWN',R_BACK:'BOOM UP',R_LEFT:'BUCKET CURL',R_RIGHT:'BUCKET DUMP'
+const $=id=>document.getElementById(id),canvas=$('sim'),ctx=canvas.getContext('2d');
+let labels=true;
+const joy={L:{x:0,y:0},R:{x:0,y:0}};
+const state={
+ boom:-0.92,      // main boom angle
+ stick:1.10,      // relative stick angle
+ bucket:0.05,     // relative bucket angle
+ swing:0,         // visual lateral offset in side view
+ fill:0,truck:0,soil:1
 };
-function render(){
- if(idx>=tests.length)return;
- const t=tests[idx];
- $('goal').innerHTML='<strong>DO THIS:</strong> '+t.prompt;
- $('bar').style.width=(idx/tests.length*100)+'%';$('correct').textContent=correct;$('errors').textContent=errors;$('stepNum').textContent=(idx+1)+'/8';
-}
-function command(code){
- if(locked||idx>=tests.length)return;
- lastCommand=code;anim={code,start:performance.now()};
- const t=tests[idx];
- if(code===t.want){
-   correct++;locked=true;$('status').innerHTML='<span class="good"><b>✓ '+t.meaning+'.</b></span> '+t.explain;
-   setTimeout(()=>{idx++;locked=false;if(idx>=tests.length){
-      $('bar').style.width='100%';$('stepNum').textContent='8/8';
-      $('status').innerHTML='<span class="good"><b>ALL 8 DIRECTIONS VERIFIED.</b></span> Dig Task is unlocked. If the visual machine response now matches what you expect, we keep this mapping.';
-      $('taskTab').disabled=false;$('taskTab').textContent='2. Dig task';
-    } else render()},700);
- }else{
-   errors++;locked=true;$('errors').textContent=errors;$('fail').classList.add('show');
-   $('status').innerHTML='<span class="bad"><b>✕ FAILED.</b></span> Your physical joystick movement commanded <b>'+meaning[code]+'</b>. Required: <b>'+t.meaning+'</b>. Same control repeats.';
-   setTimeout(()=>{$('fail').classList.remove('show');locked=false;render()},950);
- }
-}
-function bind(id,prefix,liveId){
- const el=$(id),stalk=el.querySelector('.stalk'),live=$(liveId),dot=el.querySelector('.thumbDot');
- let pid=null,startX=0,startY=0,fired=false;
+const limits={boom:[-1.28,-0.28],stick:[0.48,1.72],bucket:[-0.95,1.0],swing:[-1,1]};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
- function move(e){
+function bindPad(id,key,liveId){
+ const el=$(id),knob=el.querySelector('.knob'),live=$(liveId);
+ let pid=null,cx=0,cy=0,lim=0;
+ function update(e){
    if(pid===null)return;
-   let dx=e.clientX-startX,dy=e.clientY-startY;
-   const r=el.getBoundingClientRect();
-   const lim=Math.min(r.width,r.height)*.30;
-   const mag=Math.hypot(dx,dy);
+   let dx=e.clientX-cx,dy=e.clientY-cy;
+   const mag=Math.hypot(dx,dy)||1;
    if(mag>lim){dx*=lim/mag;dy*=lim/mag}
+   joy[key].x=dx/lim;joy[key].y=dy/lim;
+   knob.style.transform=`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px))`;
 
-   // Thumb marker follows the user's real finger movement.
-   dot.style.left=(50 + dx/r.width*100)+'%';
-   dot.style.top=(58 + dy/r.height*100)+'%';
-
-   // Direction assist:
-   // If one axis is clearly dominant, snap to that axis.
-   // This makes phone input forgiving while still teaching the real motion.
-   let sx=dx,sy=dy;
-   const ax=Math.abs(dx), ay=Math.abs(dy);
-   if(ax > ay*1.28) sy=0;
-   else if(ay > ax*1.28) sx=0;
-
-   const rx=(sy/lim)*22;
-   const rz=(sx/lim)*20;
-   stalk.style.transform=`translateX(-50%) rotateX(${rx}deg) rotateZ(${rz}deg)`;
-
-   let code=null;
-   const trigger=lim*.33;
-   if(Math.abs(sx)>Math.abs(sy)){
-     if(Math.abs(sx)>trigger) code=prefix+(sx<0?'LEFT':'RIGHT');
+   const dead=.16, parts=[];
+   if(key==='L'){
+     if(joy.L.x<-dead)parts.push('SWING LEFT');
+     if(joy.L.x>dead)parts.push('SWING RIGHT');
+     if(joy.L.y<-dead)parts.push('STICK OUT');
+     if(joy.L.y>dead)parts.push('STICK IN');
    }else{
-     if(Math.abs(sy)>trigger) code=prefix+(sy<0?'FORWARD':'BACK');
+     if(joy.R.x<-dead)parts.push('BUCKET CURL');
+     if(joy.R.x>dead)parts.push('BUCKET DUMP');
+     if(joy.R.y<-dead)parts.push('BOOM DOWN');
+     if(joy.R.y>dead)parts.push('BOOM UP');
    }
-
-   live.innerHTML=code?'<b>'+meaning[code]+'</b>':'Move farther';
-   if(code&&!fired){fired=true;command(code)}
+   live.innerHTML=parts.length?'<b>'+parts.join(' + ')+'</b>':'Centered';
+   $('lastInput').textContent=parts.length?parts.join(' + '):'No input';
  }
-
  el.addEventListener('pointerdown',e=>{
-   pid=e.pointerId;fired=false;startX=e.clientX;startY=e.clientY;
-   el.setPointerCapture(pid);el.classList.add('active');
-   dot.style.left='50%';dot.style.top='58%';
-   live.textContent='Slide your thumb';
+   const r=el.getBoundingClientRect();cx=r.left+r.width/2;cy=r.top+r.height/2;lim=r.width*.31;
+   pid=e.pointerId;el.setPointerCapture(pid);el.classList.add('active');update(e);
  });
- el.addEventListener('pointermove',move);
-
+ el.addEventListener('pointermove',update);
  function end(e){
-   if(e.pointerId!==pid)return;
-   pid=null;fired=false;
-   el.classList.remove('active');
-   stalk.style.transform='translateX(-50%)';
-   dot.style.left='50%';dot.style.top='58%';
-   live.textContent='Centered';
+   if(e.pointerId!==pid)return;pid=null;joy[key].x=joy[key].y=0;el.classList.remove('active');
+   knob.style.transform='translate(-50%,-50%)';live.textContent='Centered';
+   $('lastInput').textContent='No input';
  }
- el.addEventListener('pointerup',end);
- el.addEventListener('pointercancel',end);
+ el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
 }
-bind('leftJoy','L_','leftLive');bind('rightJoy','R_','rightLive');
-$('restart').onclick=()=>{idx=correct=errors=0;locked=false;$('taskTab').disabled=true;$('taskTab').textContent='2. Dig task 🔒';$('status').innerHTML='<span class="yellow"><b>Restarted.</b></span> Push the left joystick physically toward WINDSHIELD.';render()};
-$('labels').onclick=()=>{labels=!labels;$('labels').textContent=labels?'Hide machine labels':'Show machine labels'};
-$('taskTab').onclick=()=>{if($('taskTab').disabled)return;$('status').innerHTML='<span class="yellow"><b>Next:</b></span> Once you confirm these literal joystick directions now feel correct, the Dig Task will use these exact controls for soil → bucket → truck. I deliberately separated verification from physics so we stop teaching a wrong mapping.'};
+bindPad('leftPad','L','leftLive');bindPad('rightPad','R','rightLive');
 
-function draw(){
- ctx.clearRect(0,0,900,455);
- ctx.fillStyle='#98c8d8';ctx.fillRect(0,0,900,330);ctx.fillStyle='#76583f';ctx.fillRect(0,330,900,125);
- // ground target/truck reference
- ctx.fillStyle='#6d4c2d';ctx.beginPath();ctx.moveTo(475,345);ctx.quadraticCurveTo(560,300,655,345);ctx.lineTo(655,420);ctx.lineTo(475,420);ctx.closePath();ctx.fill();
- ctx.fillStyle='#333';ctx.fillRect(720,310,140,55);ctx.fillStyle='#e4a90f';ctx.fillRect(710,255,128,58);ctx.strokeStyle='#222';ctx.lineWidth=5;ctx.strokeRect(710,255,128,58);
- // machine static geometry plus one clear movement
- let base=300, boom=-.78,stick=.95,bucket=.05;
- if(anim&&performance.now()-anim.start<650){
-   const k=(performance.now()-anim.start)/650;
-   if(anim.code==='L_LEFT')base=300-35*Math.sin(k*Math.PI);
-   if(anim.code==='L_RIGHT')base=300+35*Math.sin(k*Math.PI);
-   if(anim.code==='L_FORWARD')stick=.95-.34*Math.sin(k*Math.PI); // extend
-   if(anim.code==='L_BACK')stick=.95+.34*Math.sin(k*Math.PI); // retract
-   if(anim.code==='R_FORWARD')boom=-.78+.28*Math.sin(k*Math.PI); // lower
-   if(anim.code==='R_BACK')boom=-.78-.28*Math.sin(k*Math.PI); // raise
-   if(anim.code==='R_LEFT')bucket=.05+.55*Math.sin(k*Math.PI); // curl
-   if(anim.code==='R_RIGHT')bucket=.05-.55*Math.sin(k*Math.PI); // dump
-   requestAnimationFrame(draw);
- }
- const sx=base+18,sy=305,L1=170,L2=140,ex=sx+Math.cos(boom)*L1,ey=sy+Math.sin(boom)*L1,a2=boom+stick,wx=ex+Math.cos(a2)*L2,wy=ey+Math.sin(a2)*L2;
- ctx.fillStyle='#292929';round(base-100,335,180,34,18);ctx.fillStyle='#e3a811';round(base-55,255,100,82,8);ctx.fillStyle='#294650';ctx.fillRect(base-38,268,52,38);
- ctx.strokeStyle='#e3a811';ctx.lineCap='round';ctx.lineWidth=23;ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();
- ctx.lineWidth=18;ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(wx,wy);ctx.stroke();
- ctx.save();ctx.translate(wx,wy);ctx.rotate(a2+bucket);ctx.fillStyle='#c98e0c';ctx.beginPath();ctx.moveTo(0,-11);ctx.lineTo(50,-8);ctx.lineTo(62,19);ctx.lineTo(12,27);ctx.closePath();ctx.fill();ctx.restore();
- if(labels){
-   ctx.font='bold 14px system-ui';label('BOOM',(sx+ex)/2-20,(sy+ey)/2-15);label('STICK',(ex+wx)/2+8,(ey+wy)/2-15);label('BUCKET',wx+12,wy+38);
- }
- ctx.fillStyle='#000b';round(12,12,320,64,9);ctx.fillStyle='#fff';ctx.font='bold 13px system-ui';ctx.fillText('PHYSICAL JOYSTICK VERIFICATION',25,35);ctx.font='12px system-ui';ctx.fillText(lastCommand?'Last input: '+meaning[lastCommand]:'Move the requested joystick direction',25,56);
+function geom(){
+ const baseX=365+state.swing*115, baseY=382;
+ const shoulder={x:baseX+38,y:baseY-105};
+ const L1=230,L2=190;
+ const elbow={x:shoulder.x+Math.cos(state.boom)*L1,y:shoulder.y+Math.sin(state.boom)*L1};
+ const a2=state.boom+state.stick;
+ const wrist={x:elbow.x+Math.cos(a2)*L2,y:elbow.y+Math.sin(a2)*L2};
+ const ba=a2+state.bucket;
+ const tooth={x:wrist.x+Math.cos(ba)*88,y:wrist.y+Math.sin(ba)*88};
+ return {baseX,baseY,shoulder,elbow,wrist,ba,tooth,a2};
 }
-function round(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.fill()}
-function label(t,x,y){const w=ctx.measureText(t).width+12;ctx.fillStyle='#f1b500';round(x,y,w,23,5);ctx.fillStyle='#111';ctx.fillText(t,x+6,y+17)}
-function loop(){draw();requestAnimationFrame(loop)}
-render();requestAnimationFrame(loop);
+
+function physics(dt){
+ const dead=.08;
+ const Lx=Math.abs(joy.L.x)>dead?joy.L.x:0;
+ const Ly=Math.abs(joy.L.y)>dead?joy.L.y:0;
+ const Rx=Math.abs(joy.R.x)>dead?joy.R.x:0;
+ const Ry=Math.abs(joy.R.y)>dead?joy.R.y:0;
+
+ // Persistent hydraulic state:
+ // input changes cylinder position; release = zero flow, NOT reset.
+ state.swing=clamp(state.swing+Lx*dt*.35,...limits.swing);
+ state.stick=clamp(state.stick+Ly*dt*.55,...limits.stick);       // up/forward negative => stick out
+ state.bucket=clamp(state.bucket-Rx*dt*.92,...limits.bucket);    // left negative => curl positive
+ state.boom=clamp(state.boom-Ry*dt*.48,...limits.boom);          // up/forward negative => boom down (angle less negative)
+
+ const active=Math.abs(Lx)+Math.abs(Ly)+Math.abs(Rx)+Math.abs(Ry)>.08;
+ $('hyd').textContent=active?'Flowing':'Holding';
+
+ const g=geom();
+ const inSoil=g.tooth.x>600&&g.tooth.x<790&&g.tooth.y>385&&g.tooth.y<520;
+ const overTruck=g.tooth.x>835&&g.tooth.x<1045&&g.tooth.y>255&&g.tooth.y<385;
+
+ // Soil interaction: curl while teeth are in pile.
+ if(inSoil && Rx<-.15 && state.soil>0 && state.fill<1){
+   const take=Math.min(state.soil,dt*.28*Math.abs(Rx));
+   state.fill=clamp(state.fill+take,0,1);
+   state.soil=clamp(state.soil-take*.42,0,1);
+ }
+ // Dump over truck.
+ if(overTruck && Rx>.18 && state.fill>0){
+   const out=Math.min(state.fill,dt*.48*Math.abs(Rx));
+   state.fill-=out;state.truck+=out*2.2;
+ }
+ // Spillage if opening elsewhere.
+ if(!overTruck && Rx>.28 && state.fill>0){
+   state.fill=Math.max(0,state.fill-dt*.22*Math.abs(Rx));
+ }
+ $('fill').textContent=Math.round(state.fill*100)+'%';
+ $('truck').textContent=state.truck.toFixed(1)+' t';
+}
+
+function rr(x,y,w,h,r,fill,stroke){
+ ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);
+ if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.stroke()}
+}
+function line(x1,y1,x2,y2,width,color){
+ ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+}
+function drawBackground(){
+ const grad=ctx.createLinearGradient(0,0,0,560);grad.addColorStop(0,'#9fc9d8');grad.addColorStop(.58,'#c4d1c3');grad.addColorStop(.59,'#8d6a47');grad.addColorStop(1,'#4d3929');ctx.fillStyle=grad;ctx.fillRect(0,0,1100,560);
+ // distant hills
+ ctx.fillStyle='#58745b';ctx.beginPath();ctx.moveTo(0,315);ctx.quadraticCurveTo(150,245,300,315);ctx.quadraticCurveTo(455,235,610,310);ctx.quadraticCurveTo(780,240,950,310);ctx.lineTo(1100,300);ctx.lineTo(1100,400);ctx.lineTo(0,400);ctx.closePath();ctx.fill();
+ ctx.fillStyle='#425f47';ctx.beginPath();ctx.moveTo(0,340);ctx.quadraticCurveTo(130,285,260,340);ctx.quadraticCurveTo(430,275,600,345);ctx.quadraticCurveTo(785,290,940,342);ctx.lineTo(1100,325);ctx.lineTo(1100,410);ctx.lineTo(0,410);ctx.closePath();ctx.fill();
+ // soil pile
+ const pileH=80*state.soil+25;
+ ctx.fillStyle='#6e4b2e';ctx.beginPath();ctx.moveTo(585,440);ctx.quadraticCurveTo(690,440-pileH,800,440);ctx.lineTo(800,530);ctx.lineTo(585,530);ctx.closePath();ctx.fill();
+ ctx.fillStyle='#805837';ctx.beginPath();ctx.moveTo(610,438);ctx.quadraticCurveTo(690,470-pileH,770,438);ctx.lineTo(770,455);ctx.lineTo(610,455);ctx.closePath();ctx.fill();
+ // truck
+ ctx.fillStyle='#272727';rr(850,360,190,78,8,'#2f3336');rr(835,292,170,76,6,'#d99b00','#111');
+ ctx.fillStyle='#111';ctx.fillRect(850,310,45,28);ctx.fillStyle='#4b6e78';ctx.fillRect(853,313,39,22);
+ ctx.fillStyle='#151515';ctx.beginPath();ctx.arc(885,448,25,0,Math.PI*2);ctx.arc(1000,448,25,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#444';ctx.beginPath();ctx.arc(885,448,10,0,Math.PI*2);ctx.arc(1000,448,10,0,Math.PI*2);ctx.fill();
+}
+function drawMachine(){
+ const g=geom();
+ // shadow
+ ctx.fillStyle='#0005';ctx.beginPath();ctx.ellipse(g.baseX,465,145,23,0,0,Math.PI*2);ctx.fill();
+ // tracks
+ rr(g.baseX-135,420,260,58,26,'#181818','#393939');
+ ctx.strokeStyle='#555';ctx.lineWidth=5;ctx.strokeRect(g.baseX-105,433,205,32);
+ ctx.fillStyle='#303030';for(let i=0;i<7;i++){ctx.beginPath();ctx.arc(g.baseX-88+i*31,449,12,0,Math.PI*2);ctx.fill()}
+ // undercarriage / slew
+ rr(g.baseX-72,394,145,30,8,'#3c3c3c');ctx.fillStyle='#1b1b1b';ctx.beginPath();ctx.arc(g.baseX,401,28,0,Math.PI*2);ctx.fill();
+ // body
+ const bodyGrad=ctx.createLinearGradient(g.baseX-80,300,g.baseX+120,410);bodyGrad.addColorStop(0,'#f0b318');bodyGrad.addColorStop(.65,'#c78800');bodyGrad.addColorStop(1,'#9c6700');
+ rr(g.baseX-75,305,175,92,15,bodyGrad,'#7b5400');
+ // counterweight
+ ctx.fillStyle='#d49500';ctx.beginPath();ctx.ellipse(g.baseX+90,350,55,50,0,0,Math.PI*2);ctx.fill();
+ // cab
+ ctx.fillStyle='#111';rr(g.baseX-62,286,68,94,9,'#161616','#2c2c2c');
+ ctx.fillStyle='#34505c';ctx.beginPath();ctx.moveTo(g.baseX-53,298);ctx.lineTo(g.baseX-8,298);ctx.lineTo(g.baseX-1,337);ctx.lineTo(g.baseX-53,337);ctx.closePath();ctx.fill();
+ ctx.fillStyle='#84aebd';ctx.globalAlpha=.22;ctx.fillRect(g.baseX-48,303,34,28);ctx.globalAlpha=1;
+ // vents and details
+ ctx.fillStyle='#4b3b17';for(let i=0;i<5;i++)ctx.fillRect(g.baseX+38+i*10,318,5,28);
+ ctx.fillStyle='#111';ctx.font='bold 18px system-ui';ctx.fillText('LOVOL',g.baseX+24,374);
+ // boom and stick with cylinders
+ line(g.shoulder.x,g.shoulder.y,g.elbow.x,g.elbow.y,34,'#d89a00');
+ line(g.shoulder.x,g.shoulder.y,g.elbow.x,g.elbow.y,22,'#efb019');
+ line(g.elbow.x,g.elbow.y,g.wrist.x,g.wrist.y,28,'#d89a00');
+ line(g.elbow.x,g.elbow.y,g.wrist.x,g.wrist.y,17,'#efb019');
+ // hydraulic cylinders
+ line(g.shoulder.x-5,g.shoulder.y-10,g.elbow.x-18,g.elbow.y-35,7,'#363636');
+ line(g.shoulder.x-5,g.shoulder.y-10,g.elbow.x-18,g.elbow.y-35,3,'#bfc4c6');
+ line(g.elbow.x+5,g.elbow.y-5,g.wrist.x-18,g.wrist.y-22,6,'#383838');
+ line(g.elbow.x+5,g.elbow.y-5,g.wrist.x-18,g.wrist.y-22,2,'#c5c9ca');
+ // joints
+ ctx.fillStyle='#7e5700';for(const p of [g.shoulder,g.elbow,g.wrist]){ctx.beginPath();ctx.arc(p.x,p.y,12,0,Math.PI*2);ctx.fill();ctx.fillStyle='#2b2b2b';ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#7e5700'}
+ // bucket
+ ctx.save();ctx.translate(g.wrist.x,g.wrist.y);ctx.rotate(g.ba);
+ const bg=ctx.createLinearGradient(0,-20,95,40);bg.addColorStop(0,'#df9d00');bg.addColorStop(1,'#8f6100');ctx.fillStyle=bg;ctx.strokeStyle='#654300';ctx.lineWidth=3;
+ ctx.beginPath();ctx.moveTo(0,-16);ctx.lineTo(58,-13);ctx.lineTo(90,22);ctx.lineTo(68,49);ctx.lineTo(20,35);ctx.closePath();ctx.fill();ctx.stroke();
+ // bucket teeth
+ ctx.fillStyle='#5b4c32';for(let i=0;i<4;i++){ctx.fillRect(66+i*7,42,6,18)}
+ // material inside
+ if(state.fill>.02){ctx.fillStyle='#65462e';ctx.beginPath();ctx.ellipse(45,15,28,18,0,0,Math.PI*2);ctx.fill()}
+ ctx.restore();
+ // label chips
+ if(labels){
+   chip('BOOM',(g.shoulder.x+g.elbow.x)/2-25,(g.shoulder.y+g.elbow.y)/2-25);
+   chip('STICK',(g.elbow.x+g.wrist.x)/2,(g.elbow.y+g.wrist.y)/2-25);
+   chip('BUCKET',g.wrist.x+35,g.wrist.y+48);
+ }
+}
+function chip(t,x,y){
+ ctx.font='bold 12px system-ui';const w=ctx.measureText(t).width+14;rr(x,y,w,23,5,'#f3b200');ctx.fillStyle='#111';ctx.fillText(t,x+7,y+16)
+}
+function draw(){
+ drawBackground();drawMachine();
+ // HUD
+ rr(16,16,250,62,9,'#0c0c0ccc');ctx.fillStyle='#fff';ctx.font='bold 13px system-ui';ctx.fillText('REALISTIC HYDRAULIC STATE',29,40);ctx.font='12px system-ui';ctx.fillStyle='#bbb';ctx.fillText('Release joystick = machine holds',29,60);
+}
+$('resetMachine').onclick=()=>{Object.assign(state,{boom:-0.92,stick:1.10,bucket:.05,swing:0,fill:0});$('status').innerHTML='<strong>Reset.</strong> Machine returned to the starting pose.'};
+$('labels').onclick=()=>{labels=!labels;$('labels').textContent=labels?'Hide labels':'Show labels'};
+$('soilBtn').onclick=()=>{state.soil=1;$('status').innerHTML='<strong>Soil refilled.</strong> You can practice scooping again.'};
+
+let last=performance.now();
+function loop(now){const dt=Math.min(.035,(now-last)/1000);last=now;physics(dt);draw();requestAnimationFrame(loop)}
+requestAnimationFrame(loop);
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
 </script>
-</body></html>
+</body>
+</html>

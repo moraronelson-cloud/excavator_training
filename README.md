@@ -1,22 +1,37 @@
-# Excavator Trainer V6.1 — Direction Fix
+# Excavator Trainer V7 — Realistic Hydraulics
 
-Cumulative replacement for V6.
+Major visual and control-state rebuild.
 
-## Fixed
-The visible joystick animation was horizontally mirrored:
-- dragging RIGHT made the joystick appear to lean LEFT
-- dragging LEFT made the joystick appear to lean RIGHT
+## What changed
+- More realistic LOVOL-style excavator rendering with:
+  - detailed body/cab
+  - tracks/rollers
+  - hydraulic cylinders
+  - shaded boom/stick/bucket
+  - terrain, hills, soil pile, truck, shadows
+- Persistent hydraulic state:
+  - move boom -> release joystick -> boom stays there
+  - curl bucket -> release -> bucket stays curled
+  - move stick -> release -> stick stays where you left it
+  - swing -> release -> upper structure holds its new position
+- Joystick knobs spring back to center, while machine state remains.
+- Continuous movement while a joystick is held.
+- Soil can enter the bucket when curling in the dirt pile.
+- Material can be dumped into the truck when positioned correctly.
+- Live hydraulic status shows Flowing vs Holding.
+- Reset machine and refill soil controls.
+- Cache bumped to V7.
 
-This has been corrected on BOTH joysticks.
+## ISO pattern used
+LEFT:
+- Forward = stick OUT
+- Back = stick IN
+- Left/right = swing
 
-Now:
-- slide right → joystick visibly leans right
-- slide left → joystick visibly leans left
-- slide forward → joystick leans toward windshield
-- slide back → joystick leans toward seat
+RIGHT:
+- Forward = boom DOWN
+- Back = boom UP
+- Left = bucket CURL
+- Right = bucket DUMP
 
-The interpreted ISO command mapping is unchanged.
-
-A cache version bump is included so the new build replaces the previous service-worker cache.
-
-Training aid only. Verify the actual excavator control-pattern decal/manual before supervised real-machine practice.
+Training aid only. Verify the real machine control pattern and use supervised real-machine practice.
