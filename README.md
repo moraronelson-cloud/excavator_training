@@ -1,21 +1,29 @@
-# Excavator Trainer V4.1 — Corrected ISO Controls
+# Excavator Trainer V5 — Literal Joysticks
 
-This is a cumulative replacement for V4.
+This version intentionally rebuilds the controls instead of patching the round touch pads.
 
-## Fix
-The joystick labels in V4 described the ISO pattern correctly, but three visual motion signs in the simulator geometry were reversed.
+## What changed
+- Two visible, real-style joystick stalks with handles and console bases.
+- User physically drags the joystick toward:
+  - WINDSHIELD / FORWARD
+  - SEAT / BACK
+  - LEFT
+  - RIGHT
+- Each movement immediately states the command being interpreted.
+- Eight-direction verification must be passed before digging unlocks.
+- Visual excavator response is separated from the control interpretation so mapping errors are easier to detect.
 
-Corrected ISO behavior:
-- LEFT joystick forward / screen up = STICK OUT
-- LEFT joystick back / screen down = STICK IN
-- LEFT joystick left/right = SWING LEFT/RIGHT
-- RIGHT joystick forward / screen up = BOOM DOWN
-- RIGHT joystick back / screen down = BOOM UP
-- RIGHT joystick left = BUCKET CURL
-- RIGHT joystick right = BUCKET DUMP
+## ISO mapping used
+LEFT:
+- Forward toward windshield = stick OUT
+- Back toward seat = stick IN
+- Left = swing LEFT
+- Right = swing RIGHT
 
-A LIVE INPUT readout has also been added so the learner can see the exact command the simulator is interpreting while moving either joystick.
+RIGHT:
+- Forward toward windshield = boom DOWN
+- Back toward seat = boom UP
+- Left = bucket CURL
+- Right = bucket DUMP
 
-All V4 micro-task/full-cycle learning logic is retained.
-
-Training aid only. Verify the actual machine's cab control-pattern decal/manual before real-machine practice.
+This matches the common ISO excavator pattern. Actual machine configuration still must be verified from its cab decal/operator manual before real-machine practice.

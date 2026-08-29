@@ -4,313 +4,210 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#101010">
-<title>Excavator Trainer V4.1 — Corrected ISO Controls</title>
+<title>Excavator Trainer V5 — Literal Joysticks</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
-:root{
-  --bg:#0e0e0e;--panel:#171717;--line:#383838;--text:#f5f5f5;--muted:#aaa;
-  --yellow:#f2b400;--good:#39c77a;--bad:#ef5350;--blue:#59b8f4;
-}
+:root{--bg:#0d0d0d;--panel:#171717;--line:#393939;--text:#f6f6f6;--muted:#aaa;--yellow:#f1b500;--good:#3ac77c;--bad:#ef5350}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Arial,sans-serif;overscroll-behavior:none}
-header{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:#121212}
+header{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:#111}
 h1{font-size:16px;margin:0}.badge{font-size:11px;font-weight:900;background:var(--yellow);color:#111;padding:5px 8px;border-radius:999px}
-main{max-width:1180px;margin:auto;padding:10px}
-.layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,.6fr);gap:10px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden}
+main{max-width:1180px;margin:auto;padding:10px}.layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,.55fr);gap:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden}.pad{padding:12px}
 .tabs{display:flex;gap:6px;overflow:auto;padding:8px 10px;border-bottom:1px solid var(--line)}
-.tabs button{white-space:nowrap;background:#252525;color:#ddd;border:1px solid #444;border-radius:9px;padding:9px 11px;font-weight:850}
+.tabs button{white-space:nowrap;background:#262626;color:#ddd;border:1px solid #454545;border-radius:9px;padding:9px 11px;font-weight:850}
 .tabs button.active{background:var(--yellow);color:#111;border-color:var(--yellow)}
-.tabs button:disabled{opacity:.45}
-.simWrap{position:relative}
-canvas{display:block;width:100%;height:auto;background:#9bc9d8}
-.failOverlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#000a;z-index:5}.failOverlay.show{display:flex}.xmark{font-size:110px;font-weight:950;color:var(--bad)}
-.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:10px;border-top:1px solid var(--line)}
-.joyWrap{text-align:center}.joyTitle{font-weight:900;font-size:13px;margin-bottom:5px}
-.joy{width:min(180px,42vw);height:min(180px,42vw);margin:auto;border:2px solid #555;border-radius:50%;position:relative;touch-action:none;background:radial-gradient(circle,#292929,#151515)}
-.knob{width:58px;height:58px;border-radius:50%;background:#555;border:3px solid #777;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
-.axis{position:absolute;font-size:10px;color:#aaa;font-weight:850}.axis.up{top:5px;left:50%;transform:translateX(-50%)}.axis.down{bottom:5px;left:50%;transform:translateX(-50%)}.axis.left{left:5px;top:50%;transform:translateY(-50%)}.axis.right{right:5px;top:50%;transform:translateY(-50%)}
-.pad{padding:12px}.title{font-size:21px;font-weight:950}.sub{font-size:13px;color:var(--muted);margin-top:3px}
-.goal{background:#111;border:1px solid #343434;border-radius:11px;padding:10px;margin-top:10px;line-height:1.42}
-.goal strong,.part{color:var(--yellow)}
-.progress{height:9px;background:#333;border-radius:999px;overflow:hidden;margin:10px 0}.progress div{height:100%;background:var(--yellow);width:0}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.stat{background:#101010;border:1px solid #303030;border-radius:10px;padding:8px;text-align:center}.stat b{display:block;font-size:18px}
-.small{font-size:11px;color:var(--muted)}
-.status{margin-top:10px;background:#101010;border:1px solid #333;border-radius:10px;padding:10px;min-height:60px;font-size:13px;line-height:1.4}
+.tabs button:disabled{opacity:.4}
+.scene{position:relative;background:#94c7d9}
+canvas{display:block;width:100%;height:auto}
+.fail{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#000b;z-index:10}.fail.show{display:flex}.fail span{font-size:120px;color:var(--bad);font-weight:950}
+.joystickDeck{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 10px 10px;border-top:1px solid var(--line)}
+.joyUnit{text-align:center;min-width:0}.joyName{font-size:14px;font-weight:950;margin-bottom:6px}
+.joyFrame{position:relative;width:min(210px,44vw);height:min(220px,48vw);margin:auto;touch-action:none;user-select:none}
+.console{position:absolute;left:10%;right:10%;bottom:0;height:53%;background:linear-gradient(#444,#222);border:2px solid #5a5a5a;border-radius:25px 25px 16px 16px}
+.boot{position:absolute;left:50%;bottom:39%;width:62px;height:52px;transform:translateX(-50%);border-radius:50%;background:#222;border:5px solid #555}
+.stalk{position:absolute;left:50%;bottom:48%;width:20px;height:86px;transform-origin:50% 95%;transform:translateX(-50%);background:linear-gradient(90deg,#282828,#696969,#222);border-radius:10px}
+.handle{position:absolute;left:50%;top:-22px;width:55px;height:62px;transform:translateX(-50%);background:linear-gradient(90deg,#333,#666,#292929);border:2px solid #777;border-radius:18px 18px 14px 14px}
+.direction{position:absolute;font-size:10px;font-weight:900;color:#bbb;pointer-events:none}.front{top:0;left:50%;transform:translateX(-50%)}.seat{bottom:1px;left:50%;transform:translateX(-50%)}.dl{left:0;top:48%}.dr{right:0;top:48%}
+.live{margin-top:4px;min-height:34px;font-size:11px;color:#ddd}.live b{color:var(--yellow)}
+.title{font-size:21px;font-weight:950}.sub{font-size:13px;color:var(--muted);margin-top:3px}
+.goal{margin-top:10px;background:#101010;border:1px solid #343434;border-radius:10px;padding:10px;line-height:1.42}.goal strong{color:var(--yellow)}
+.status{margin-top:10px;background:#101010;border:1px solid #333;border-radius:10px;padding:10px;line-height:1.4;font-size:13px;min-height:62px}
 .good{color:var(--good)}.bad{color:var(--bad)}.yellow{color:var(--yellow)}
-.row{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
-button.action{background:#292929;color:white;border:1px solid #555;border-radius:9px;padding:9px 11px;font-weight:800}
-button.primary{background:var(--yellow);color:#111;border-color:var(--yellow)}
-.tip{border-left:3px solid var(--yellow);background:#211b0d;padding:9px;margin-top:10px;font-size:12px;line-height:1.4}
-.unlock{margin-top:10px;padding:9px;border-radius:10px;background:#101010;border:1px solid #333;font-size:12px}
-@media(max-width:830px){.layout{grid-template-columns:1fr}.info{order:-1}.title{font-size:18px}.controls{gap:5px}.stats{grid-template-columns:repeat(2,1fr)}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.stat{background:#101010;border:1px solid #303030;border-radius:9px;padding:8px;text-align:center}.stat b{display:block;font-size:18px}.small{font-size:11px;color:var(--muted)}
+.progress{height:9px;background:#333;border-radius:999px;overflow:hidden;margin:10px 0}.progress div{height:100%;background:var(--yellow);width:0}
+.row{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}button.action{background:#292929;color:#fff;border:1px solid #555;border-radius:9px;padding:9px 11px;font-weight:800}button.primary{background:var(--yellow);color:#111;border-color:var(--yellow)}
+.map{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:7px}.map div{background:#101010;border:1px solid #303030;border-radius:9px;padding:8px;font-size:11px;line-height:1.4}.map b{color:var(--yellow)}
+.note{border-left:3px solid var(--yellow);background:#211b0d;padding:9px;margin-top:10px;font-size:12px;line-height:1.4}
+@media(max-width:830px){.layout{grid-template-columns:1fr}.info{order:-1}.title{font-size:18px}.joystickDeck{gap:4px}.joyFrame{width:min(190px,46vw);height:min(205px,49vw)}}
 </style>
 </head>
 <body>
-<header><h1>EXCAVATOR TRAINER</h1><span class="badge">V4.1 · CONTROL FIX</span></header>
+<header><h1>EXCAVATOR TRAINER</h1><span class="badge">V5 · LITERAL JOYSTICKS</span></header>
 <main>
 <div class="layout">
 <section class="card">
   <div class="tabs">
-    <button id="tab1" class="active">1. Controls</button>
-    <button id="tab2">2. Micro tasks</button>
-    <button id="tab3" disabled>3. Full cycle 🔒</button>
-    <button id="tab4" disabled>4. Position machine 🔒</button>
+    <button id="testTab" class="active">1. Verify controls</button>
+    <button id="taskTab" disabled>2. Dig task 🔒</button>
+    <button id="travelTab" disabled>3. Travel/position 🔒</button>
+  </div>
+  <div class="scene">
+    <canvas id="sim" width="900" height="455"></canvas>
+    <div class="fail" id="fail"><span>✕</span></div>
   </div>
 
-  <div class="simWrap">
-    <canvas id="sim" width="900" height="470"></canvas>
-    <div class="failOverlay" id="failOverlay"><div class="xmark">✕</div></div>
-  </div>
-
-  <div class="controls">
-    <div class="joyWrap">
-      <div class="joyTitle">LEFT JOYSTICK</div>
-      <div class="joy" id="leftJoy">
-        <span class="axis up">STICK OUT ↑</span><span class="axis down">↓ STICK IN</span>
-        <span class="axis left">← SWING</span><span class="axis right">SWING →</span>
-        <div class="knob"></div>
+  <div class="joystickDeck">
+    <div class="joyUnit">
+      <div class="joyName">LEFT REAL-STYLE JOYSTICK</div>
+      <div class="joyFrame" id="leftJoy">
+        <span class="direction front">WINDSHIELD / FORWARD</span><span class="direction seat">SEAT / BACK</span>
+        <span class="direction dl">← LEFT</span><span class="direction dr">RIGHT →</span>
+        <div class="console"></div><div class="boot"></div><div class="stalk"><div class="handle"></div></div>
       </div>
+      <div class="live" id="leftLive">Centered</div>
     </div>
-    <div class="joyWrap">
-      <div class="joyTitle">RIGHT JOYSTICK</div>
-      <div class="joy" id="rightJoy">
-        <span class="axis up">BOOM DOWN ↑</span><span class="axis down">↓ BOOM UP</span>
-        <span class="axis left">← CURL</span><span class="axis right">DUMP →</span>
-        <div class="knob"></div>
+
+    <div class="joyUnit">
+      <div class="joyName">RIGHT REAL-STYLE JOYSTICK</div>
+      <div class="joyFrame" id="rightJoy">
+        <span class="direction front">WINDSHIELD / FORWARD</span><span class="direction seat">SEAT / BACK</span>
+        <span class="direction dl">← LEFT</span><span class="direction dr">RIGHT →</span>
+        <div class="console"></div><div class="boot"></div><div class="stalk"><div class="handle"></div></div>
       </div>
+      <div class="live" id="rightLive">Centered</div>
     </div>
   </div>
 </section>
 
 <aside class="card info"><div class="pad">
-  <div class="title" id="title">Micro Task 1 — Scoop</div>
-  <div class="sub" id="sub">Turn joystick memory into job memory.</div>
-  <div class="goal" id="goal"><strong>GOAL:</strong> Put the bucket teeth into the soil and <span class="part">curl</span> until the bucket reaches at least 70% full.</div>
+  <div class="title" id="title">Control Verification</div>
+  <div class="sub">First make the simulator prove every joystick direction.</div>
+  <div class="goal" id="goal"><strong>DO THIS:</strong> Push the <b>LEFT joystick FORWARD toward the windshield</b>.</div>
   <div class="progress"><div id="bar"></div></div>
-
   <div class="stats">
-    <div class="stat"><b id="bucketFill">0%</b><span class="small">Bucket</span></div>
-    <div class="stat"><b id="truckLoad">0.0</b><span class="small">Truck</span></div>
-    <div class="stat"><b id="passes">0</b><span class="small">Passes</span></div>
-    <div class="stat"><b id="fails">0</b><span class="small">Fails</span></div>
+    <div class="stat"><b id="correct">0</b><span class="small">Correct</span></div>
+    <div class="stat"><b id="errors">0</b><span class="small">Fails</span></div>
+    <div class="stat"><b id="stepNum">1/8</b><span class="small">Control</span></div>
   </div>
+  <div class="status" id="status"><span class="yellow"><b>Important:</b></span> Ignore the excavator for one moment. Physically drag the joystick handle toward the word WINDSHIELD.</div>
 
-  <div class="status" id="status"><span class="yellow"><b>Practical:</b></span> Reach the soil, then curl the bucket. The app will fail you if you perform the wrong action for the task.</div>
-  <div class="unlock"><b>LIVE INPUT:</b> <span id="liveInput">Joysticks centered</span></div>
-
+  <div class="map">
+    <div><b>LEFT STICK</b><br>Forward = stick OUT<br>Back = stick IN<br>Left/right = swing</div>
+    <div><b>RIGHT STICK</b><br>Forward = boom DOWN<br>Back = boom UP<br>Left = bucket CURL<br>Right = bucket DUMP</div>
+  </div>
   <div class="row">
-    <button class="action primary" id="restart">Restart task</button>
-    <button class="action" id="labels">Hide labels</button>
-    <button class="action" id="lesson">Show cue</button>
+    <button class="action primary" id="restart">Restart verification</button>
+    <button class="action" id="labels">Hide machine labels</button>
   </div>
-
-  <div class="unlock" id="unlock"><b>Unlock rule:</b> complete all 4 micro tasks. Then Full Cycle unlocks.</div>
-  <div class="tip"><b>Teaching logic:</b> after each control is learned, you immediately use it for something real: scoop material, lift it, carry it, then dump it. That creates the association “I want this outcome → I make this machine movement.”</div>
+  <div class="note"><b>Why this version is different:</b> no round gamepad control. You drag a visible joystick stalk as if your hand were on the cab joystick. “Forward” always means toward the windshield; “back” always means toward your seat.</div>
 </div></aside>
 </div>
 </main>
 
 <script>
-const $=id=>document.getElementById(id), cvs=$('sim'),ctx=cvs.getContext('2d');
-let labels=true, task=0, passes=0, fails=0, locked=false, mode='micro';
-const joy={L:{x:0,y:0},R:{x:0,y:0}};
-let s;
-
-const tasks=[
-  {title:'Micro Task 1 — Scoop',sub:'Learn bucket curl by actually taking material.',goal:'Put the bucket teeth into the soil and <span class="part">curl</span> until the bucket reaches at least <b>70% full</b>.',cue:'Right joystick LEFT = bucket curl. Stick/boom can be used to place the bucket, but dumping during this task is a fail.'},
-  {title:'Micro Task 2 — Lift',sub:'Learn boom-up with weight in the bucket.',goal:'Start with a loaded bucket. Raise it above the <b>blue height line</b> without dumping or touching the ground.',cue:'Right joystick BACK toward you = boom up. Keep the bucket curled enough to hold the load.'},
-  {title:'Micro Task 3 — Carry / Swing',sub:'Move the load sideways without losing it.',goal:'Swing the loaded bucket into the <b>yellow transfer zone</b> while keeping at least <b>60% of the load</b>.',cue:'Left joystick RIGHT = swing right. Keep the load controlled; dumping before the zone is a fail.'},
-  {title:'Micro Task 4 — Dump',sub:'Release material into the truck.',goal:'Place the loaded bucket over the truck bed and <span class="part">dump</span> at least <b>80%</b> of the load into it.',cue:'Right joystick RIGHT = bucket dump. Dump only while over the truck bed.'}
+const $=id=>document.getElementById(id),c=$('sim'),ctx=c.getContext('2d');
+let labels=true, idx=0,correct=0,errors=0,locked=false,lastCommand='',anim=null;
+const tests=[
+ {want:'L_FORWARD',prompt:'Push the <b>LEFT joystick FORWARD toward the windshield</b>.',meaning:'STICK OUT',explain:'The stick/dipper extends away from the cab.'},
+ {want:'L_BACK',prompt:'Pull the <b>LEFT joystick BACK toward your seat</b>.',meaning:'STICK IN',explain:'The stick/dipper comes toward the cab.'},
+ {want:'L_LEFT',prompt:'Move the <b>LEFT joystick LEFT</b>.',meaning:'SWING LEFT',explain:'The upper structure swings left.'},
+ {want:'L_RIGHT',prompt:'Move the <b>LEFT joystick RIGHT</b>.',meaning:'SWING RIGHT',explain:'The upper structure swings right.'},
+ {want:'R_FORWARD',prompt:'Push the <b>RIGHT joystick FORWARD toward the windshield</b>.',meaning:'BOOM DOWN',explain:'The main boom lowers.'},
+ {want:'R_BACK',prompt:'Pull the <b>RIGHT joystick BACK toward your seat</b>.',meaning:'BOOM UP',explain:'The main boom raises.'},
+ {want:'R_LEFT',prompt:'Move the <b>RIGHT joystick LEFT</b>.',meaning:'BUCKET CURL',explain:'The bucket curls inward to scoop/hold material.'},
+ {want:'R_RIGHT',prompt:'Move the <b>RIGHT joystick RIGHT</b>.',meaning:'BUCKET DUMP',explain:'The bucket opens outward to release material.'}
 ];
-
-function resetState(){
- s={boom:-.72,stick:1.0,bucket:.1,swing:0,fill:task===0?0:.82,truck:0,spill:0,t:0};
- if(task===2){s.boom=-.95;s.stick=.9;s.bucket=-.35}
- if(task===3){s.swing=.55;s.boom=-.95;s.stick=.8;s.bucket=-.4}
- renderInfo();
+const meaning={
+ L_FORWARD:'STICK OUT',L_BACK:'STICK IN',L_LEFT:'SWING LEFT',L_RIGHT:'SWING RIGHT',
+ R_FORWARD:'BOOM DOWN',R_BACK:'BOOM UP',R_LEFT:'BUCKET CURL',R_RIGHT:'BUCKET DUMP'
+};
+function render(){
+ if(idx>=tests.length)return;
+ const t=tests[idx];
+ $('goal').innerHTML='<strong>DO THIS:</strong> '+t.prompt;
+ $('bar').style.width=(idx/tests.length*100)+'%';$('correct').textContent=correct;$('errors').textContent=errors;$('stepNum').textContent=(idx+1)+'/8';
 }
-function renderInfo(){
- const t=tasks[task];
- $('title').textContent=t.title;$('sub').textContent=t.sub;$('goal').innerHTML='<strong>GOAL:</strong> '+t.goal;
- $('bucketFill').textContent=Math.round(s.fill*100)+'%';$('truckLoad').textContent=s.truck.toFixed(1);$('passes').textContent=passes;$('fails').textContent=fails;
- $('bar').style.width=(task/tasks.length*100)+'%';
-}
-function fail(reason){
- if(locked)return;locked=true;fails++;
- $('fails').textContent=fails;
- $('failOverlay').classList.add('show');
- $('status').innerHTML='<span class="bad"><b>✕ FAILED.</b></span> '+reason+' Restarting the same task.';
- setTimeout(()=>{$('failOverlay').classList.remove('show');locked=false;resetState()},950);
-}
-function pass(msg){
- if(locked)return;locked=true;passes++;
- $('passes').textContent=passes;
- $('status').innerHTML='<span class="good"><b>✓ PASSED.</b></span> '+msg;
- setTimeout(()=>{
-   task++;
-   if(task>=tasks.length){
-     task=0;mode='full';locked=false;
-     $('tab3').disabled=false;$('tab3').textContent='3. Full cycle';$('tab3').classList.add('active');$('tab2').classList.remove('active');
-     $('title').textContent='Full Cycle — Dig → Lift → Swing → Dump';
-     $('sub').textContent='Now combine everything into one production cycle.';
-     $('goal').innerHTML='<strong>GOAL:</strong> Dig at least 70% bucket, lift clear, swing into the truck zone, and dump at least 80% into the truck. Repeat <b>3 clean cycles</b>.';
-     $('unlock').innerHTML='<b>Next unlock:</b> Position Machine unlocks after 3 clean full cycles.';
-     fullCycles=0;resetFull();return;
-   }
-   locked=false;resetState();
- },700);
-}
-function geom(){
- const baseX=300+s.swing*170,baseY=320,L1=165,L2=135;
- const ex=baseX+Math.cos(s.boom)*L1,ey=baseY+Math.sin(s.boom)*L1;
- const a2=s.boom+s.stick,wx=ex+Math.cos(a2)*L2,wy=ey+Math.sin(a2)*L2;
- const ba=a2+s.bucket,tx=wx+Math.cos(ba)*58,ty=wy+Math.sin(ba)*58;
- return {baseX,baseY,ex,ey,wx,wy,ba,tx,ty};
-}
-let fullCycles=0;
-function resetFull(){s={boom:-.72,stick:1.05,bucket:.1,swing:0,fill:0,truck:0,spill:0,t:0};renderFullInfo()}
-function renderFullInfo(){
- $('bucketFill').textContent=Math.round(s.fill*100)+'%';$('truckLoad').textContent=s.truck.toFixed(1);$('passes').textContent=fullCycles;$('fails').textContent=fails;
- $('bar').style.width=(fullCycles/3*100)+'%';
-}
-function step(dt){
- if(locked)return;
- const sp=1;
- s.swing=clamp(s.swing+joy.L.x*dt*.44*sp,-1,1);
- // ISO direction mapping, corrected to match the simulator geometry:
- // LEFT forward (screen up) = stick OUT; LEFT back = stick IN.
- s.stick=clamp(s.stick+joy.L.y*dt*.72*sp,.5,1.75);
- // RIGHT left = bucket CURL; RIGHT right = bucket DUMP.
- s.bucket=clamp(s.bucket-joy.R.x*dt*1.15*sp,-.95,1.05);
- // RIGHT forward (screen up) = boom DOWN; RIGHT back = boom UP.
- s.boom=clamp(s.boom-joy.R.y*dt*.70*sp,-1.2,-.15);
- const g=geom();
-
- const inSoil=g.tx>465&&g.tx<655&&g.ty>340&&g.ty<425;
- const overTruck=g.tx>700&&g.tx<865&&g.ty>210&&g.ty<345;
- const inTransfer=g.tx>610&&g.tx<760&&g.ty<285;
-
- if(mode==='micro'){
-   if(task===0){
-     if(joy.R.x>.35 && s.fill<.7) return fail('You dumped/opened the bucket during the scoop task.');
-     if(inSoil && joy.R.x<-.15 && s.fill<1){s.fill=clamp(s.fill+dt*.55*Math.abs(joy.R.x),0,1)}
-     if(s.fill>=.7)pass('You converted BUCKET CURL into a real scoop.');
-   }
-   if(task===1){
-     if(joy.R.x>.45)return fail('You dumped the load. Keep the bucket closed during the lift.');
-     if(g.ty>410)return fail('The loaded bucket hit/dragged the ground.');
-     if(g.ty<245)pass('Boom-up now means: lift the loaded attachment clear of the ground.');
-   }
-   if(task===2){
-     if(joy.R.x>.45)return fail('You dumped before reaching the transfer zone.');
-     if(s.fill<.60)return fail('Too much load was lost before reaching the transfer zone.');
-     if(inTransfer && s.swing>.35)pass('Swing-right now means carrying the load to the dump side.');
-   }
-   if(task===3){
-     if(joy.R.x>.2 && !overTruck && s.fill>.1)return fail('You dumped outside the truck.');
-     if(overTruck && joy.R.x>.18 && s.fill>.02){
-       const out=Math.min(s.fill,dt*.85*Math.abs(joy.R.x));s.fill-=out;s.truck+=out;
-     }
-     if(s.truck>=.65)pass('You placed the bucket correctly and released the load into the truck.');
-   }
-   renderInfo();
+function command(code){
+ if(locked||idx>=tests.length)return;
+ lastCommand=code;anim={code,start:performance.now()};
+ const t=tests[idx];
+ if(code===t.want){
+   correct++;locked=true;$('status').innerHTML='<span class="good"><b>✓ '+t.meaning+'.</b></span> '+t.explain;
+   setTimeout(()=>{idx++;locked=false;if(idx>=tests.length){
+      $('bar').style.width='100%';$('stepNum').textContent='8/8';
+      $('status').innerHTML='<span class="good"><b>ALL 8 DIRECTIONS VERIFIED.</b></span> Dig Task is unlocked. If the visual machine response now matches what you expect, we keep this mapping.';
+      $('taskTab').disabled=false;$('taskTab').textContent='2. Dig task';
+    } else render()},700);
  }else{
-   if(inSoil && joy.R.x<-.14 && s.fill<1)s.fill=clamp(s.fill+dt*.52*Math.abs(joy.R.x),0,1);
-   if(s.fill>.03 && joy.R.x>.25 && !overTruck){
-     const loss=Math.min(s.fill,dt*.5);s.fill-=loss;s.spill+=loss;
-     if(s.spill>.18)return fail('Too much material was dumped/spilled outside the truck during the full cycle.');
-   }
-   if(overTruck && joy.R.x>.2 && s.fill>.02){
-     const out=Math.min(s.fill,dt*.72*Math.abs(joy.R.x));s.fill-=out;s.truck+=out;
-   }
-   if(s.truck>=.58 && s.fill<.08){
-     fullCycles++;$('status').innerHTML='<span class="good"><b>✓ CLEAN CYCLE.</b></span> Dig → lift → swing → dump completed.';
-     if(fullCycles>=3){
-       locked=true;$('tab4').disabled=false;$('tab4').textContent='4. Position machine';
-       $('status').innerHTML='<span class="good"><b>FULL CYCLE MASTERED.</b></span> Position Machine is unlocked. Travel pedals come next.';
-     } else resetFull();
-   }
-   renderFullInfo();
+   errors++;locked=true;$('errors').textContent=errors;$('fail').classList.add('show');
+   $('status').innerHTML='<span class="bad"><b>✕ FAILED.</b></span> Your physical joystick movement commanded <b>'+meaning[code]+'</b>. Required: <b>'+t.meaning+'</b>. Same control repeats.';
+   setTimeout(()=>{$('fail').classList.remove('show');locked=false;render()},950);
  }
 }
-
-function liveCommand(){
- const parts=[];
- const dead=.18;
- if(joy.L.x < -dead) parts.push('LEFT: SWING LEFT');
- if(joy.L.x > dead) parts.push('LEFT: SWING RIGHT');
- if(joy.L.y < -dead) parts.push('LEFT: STICK OUT');
- if(joy.L.y > dead) parts.push('LEFT: STICK IN');
- if(joy.R.x < -dead) parts.push('RIGHT: BUCKET CURL');
- if(joy.R.x > dead) parts.push('RIGHT: BUCKET DUMP');
- if(joy.R.y < -dead) parts.push('RIGHT: BOOM DOWN');
- if(joy.R.y > dead) parts.push('RIGHT: BOOM UP');
- const el=$('liveInput');
- if(el) el.textContent=parts.length?parts.join(' + '):'Joysticks centered';
-}
-
-function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
-function bindJoy(elId,key){
- const el=$(elId),knob=el.querySelector('.knob');let pid=null;
- function mv(e){
-  if(pid===null)return;const r=el.getBoundingClientRect(),lim=r.width*.30;
-  let dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),m=Math.hypot(dx,dy)||1;if(m>lim){dx*=lim/m;dy*=lim/m}
-  joy[key].x=dx/lim;joy[key].y=dy/lim;knob.style.transform=`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px))`;
+function bind(id,prefix,liveId){
+ const el=$(id),stalk=el.querySelector('.stalk'),live=$(liveId);let pid=null,fired=false;
+ function move(e){
+   if(pid===null)return;
+   const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height*.53;
+   let dx=e.clientX-cx,dy=e.clientY-cy;
+   const limX=r.width*.22,limY=r.height*.20;
+   dx=Math.max(-limX,Math.min(limX,dx));dy=Math.max(-limY,Math.min(limY,dy));
+   const rx=(dy/limY)*20,rz=-(dx/limX)*18;
+   stalk.style.transform=`translateX(-50%) rotateX(${rx}deg) rotateZ(${rz}deg)`;
+   let code=null;
+   if(Math.abs(dx)>Math.abs(dy)){
+     if(Math.abs(dx)>limX*.48)code=prefix+(dx<0?'LEFT':'RIGHT');
+   } else if(Math.abs(dy)>limY*.48){
+     code=prefix+(dy<0?'FORWARD':'BACK');
+   }
+   live.innerHTML=code?'<b>'+meaning[code]+'</b>':'Centered';
+   if(code&&!fired){fired=true;command(code)}
  }
- el.addEventListener('pointerdown',e=>{pid=e.pointerId;el.setPointerCapture(pid);mv(e)});
- el.addEventListener('pointermove',mv);
- function end(e){if(e.pointerId!==pid)return;pid=null;joy[key].x=joy[key].y=0;knob.style.transform='translate(-50%,-50%)'}
+ el.addEventListener('pointerdown',e=>{pid=e.pointerId;fired=false;el.setPointerCapture(pid);move(e)});
+ el.addEventListener('pointermove',move);
+ function end(e){if(e.pointerId!==pid)return;pid=null;fired=false;stalk.style.transform='translateX(-50%)';live.textContent='Centered'}
  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
 }
-bindJoy('leftJoy','L');bindJoy('rightJoy','R');
-
-$('restart').onclick=()=>{locked=false;if(mode==='micro')resetState();else resetFull();$('status').innerHTML='<span class="yellow"><b>Restarted.</b></span> Repeat the task cleanly.'};
-$('labels').onclick=()=>{labels=!labels;$('labels').textContent=labels?'Hide labels':'Show labels'};
-$('lesson').onclick=()=>{$('status').innerHTML='<span class="yellow"><b>CUE:</b></span> '+(mode==='micro'?tasks[task].cue:'Scoop first. Lift clear. Swing only after the bucket is stable. Dump only over the truck.')};
-$('tab2').onclick=()=>{mode='micro';task=0;locked=false;$('tab2').classList.add('active');$('tab3').classList.remove('active');resetState()};
-$('tab3').onclick=()=>{if($('tab3').disabled)return;mode='full';locked=false;$('tab3').classList.add('active');$('tab2').classList.remove('active');resetFull()};
-$('tab4').onclick=()=>{if($('tab4').disabled)return;$('status').innerHTML='<span class="yellow"><b>Unlocked.</b></span> Position/Travel is the next build: pedals, forward/reverse track logic, 180° upper-structure confusion drills, approach angle and safe setup position.'};
+bind('leftJoy','L_','leftLive');bind('rightJoy','R_','rightLive');
+$('restart').onclick=()=>{idx=correct=errors=0;locked=false;$('taskTab').disabled=true;$('taskTab').textContent='2. Dig task 🔒';$('status').innerHTML='<span class="yellow"><b>Restarted.</b></span> Push the left joystick physically toward WINDSHIELD.';render()};
+$('labels').onclick=()=>{labels=!labels;$('labels').textContent=labels?'Hide machine labels':'Show machine labels'};
+$('taskTab').onclick=()=>{if($('taskTab').disabled)return;$('status').innerHTML='<span class="yellow"><b>Next:</b></span> Once you confirm these literal joystick directions now feel correct, the Dig Task will use these exact controls for soil → bucket → truck. I deliberately separated verification from physics so we stop teaching a wrong mapping.'};
 
 function draw(){
- ctx.clearRect(0,0,900,470);
- ctx.fillStyle='#9bc9d9';ctx.fillRect(0,0,900,335);
- ctx.fillStyle='#76583e';ctx.fillRect(0,335,900,135);
- // soil
- ctx.fillStyle='#5e8b49';ctx.fillRect(465,333,190,12);
- ctx.fillStyle='#6e4e31';ctx.beginPath();ctx.moveTo(465,345);ctx.quadraticCurveTo(555,300,655,345);ctx.lineTo(655,430);ctx.lineTo(465,430);ctx.closePath();ctx.fill();
- // transfer target
- if((mode==='micro'&&task===2)||mode==='full'){ctx.fillStyle='#f2b40055';ctx.fillRect(610,205,150,120);ctx.strokeStyle='#f2b400';ctx.strokeRect(610,205,150,120)}
- // blue height line
- if(mode==='micro'&&task===1){ctx.strokeStyle='#59b8f4';ctx.lineWidth=3;ctx.setLineDash([8,8]);ctx.beginPath();ctx.moveTo(420,245);ctx.lineTo(680,245);ctx.stroke();ctx.setLineDash([])}
- // truck
- ctx.fillStyle='#30343a';ctx.fillRect(710,315,145,52);ctx.fillStyle='#e7a912';ctx.fillRect(700,260,130,58);ctx.strokeStyle='#222';ctx.lineWidth=5;ctx.strokeRect(700,260,130,58);
- ctx.fillStyle='#222';ctx.beginPath();ctx.arc(740,374,18,0,Math.PI*2);ctx.arc(825,374,18,0,Math.PI*2);ctx.fill();
-
- const g=geom();
- ctx.fillStyle='#292929';round(g.baseX-100,335,180,34,18);
- ctx.fillStyle='#e5aa12';round(g.baseX-55,255,100,82,8);ctx.fillStyle='#294752';ctx.fillRect(g.baseX-38,268,52,38);
- ctx.strokeStyle='#e5aa12';ctx.lineCap='round';ctx.lineWidth=23;ctx.beginPath();ctx.moveTo(g.baseX+18,305);ctx.lineTo(g.ex,g.ey);ctx.stroke();
- ctx.lineWidth=18;ctx.beginPath();ctx.moveTo(g.ex,g.ey);ctx.lineTo(g.wx,g.wy);ctx.stroke();
- ctx.save();ctx.translate(g.wx,g.wy);ctx.rotate(g.ba);ctx.fillStyle=s.fill>.05?'#96642e':'#c99010';ctx.beginPath();ctx.moveTo(0,-11);ctx.lineTo(50,-8);ctx.lineTo(62,19);ctx.lineTo(12,27);ctx.closePath();ctx.fill();
- if(s.fill>.05){ctx.fillStyle='#6b4b2c';ctx.beginPath();ctx.arc(31,6,13,0,Math.PI*2);ctx.fill()}ctx.restore();
- // falling dirt visual when over truck and dumping
- if(g.tx>700&&g.tx<865&&joy.R.x>.2&&s.fill>.01){ctx.fillStyle='#6b4b2c';for(let i=0;i<7;i++)ctx.fillRect(g.tx+i*3,g.ty+20+i*5,5,5)}
- if(labels){
-   ctx.font='bold 14px system-ui';ctx.fillStyle='#111';label('DIG',505,319);label('TRUCK',745,245);
-   if(mode==='micro'&&task===1)label('LIFT ABOVE LINE',485,220);
-   if((mode==='micro'&&task===2)||mode==='full')label('TRANSFER ZONE',620,190);
+ ctx.clearRect(0,0,900,455);
+ ctx.fillStyle='#98c8d8';ctx.fillRect(0,0,900,330);ctx.fillStyle='#76583f';ctx.fillRect(0,330,900,125);
+ // ground target/truck reference
+ ctx.fillStyle='#6d4c2d';ctx.beginPath();ctx.moveTo(475,345);ctx.quadraticCurveTo(560,300,655,345);ctx.lineTo(655,420);ctx.lineTo(475,420);ctx.closePath();ctx.fill();
+ ctx.fillStyle='#333';ctx.fillRect(720,310,140,55);ctx.fillStyle='#e4a90f';ctx.fillRect(710,255,128,58);ctx.strokeStyle='#222';ctx.lineWidth=5;ctx.strokeRect(710,255,128,58);
+ // machine static geometry plus one clear movement
+ let base=300, boom=-.78,stick=.95,bucket=.05;
+ if(anim&&performance.now()-anim.start<650){
+   const k=(performance.now()-anim.start)/650;
+   if(anim.code==='L_LEFT')base=300-35*Math.sin(k*Math.PI);
+   if(anim.code==='L_RIGHT')base=300+35*Math.sin(k*Math.PI);
+   if(anim.code==='L_FORWARD')stick=.95-.34*Math.sin(k*Math.PI); // extend
+   if(anim.code==='L_BACK')stick=.95+.34*Math.sin(k*Math.PI); // retract
+   if(anim.code==='R_FORWARD')boom=-.78+.28*Math.sin(k*Math.PI); // lower
+   if(anim.code==='R_BACK')boom=-.78-.28*Math.sin(k*Math.PI); // raise
+   if(anim.code==='R_LEFT')bucket=.05+.55*Math.sin(k*Math.PI); // curl
+   if(anim.code==='R_RIGHT')bucket=.05-.55*Math.sin(k*Math.PI); // dump
+   requestAnimationFrame(draw);
  }
- // info HUD
- ctx.fillStyle='#000b';round(12,12,250,65,9);ctx.fillStyle='#fff';ctx.font='bold 13px system-ui';ctx.fillText(mode==='micro'?'MICRO TASK TRAINING':'FULL CYCLE TRAINING',25,35);
- ctx.font='12px system-ui';ctx.fillText(`Bucket ${Math.round(s.fill*100)}%  |  Truck ${s.truck.toFixed(1)}`,25,56);
+ const sx=base+18,sy=305,L1=170,L2=140,ex=sx+Math.cos(boom)*L1,ey=sy+Math.sin(boom)*L1,a2=boom+stick,wx=ex+Math.cos(a2)*L2,wy=ey+Math.sin(a2)*L2;
+ ctx.fillStyle='#292929';round(base-100,335,180,34,18);ctx.fillStyle='#e3a811';round(base-55,255,100,82,8);ctx.fillStyle='#294650';ctx.fillRect(base-38,268,52,38);
+ ctx.strokeStyle='#e3a811';ctx.lineCap='round';ctx.lineWidth=23;ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();
+ ctx.lineWidth=18;ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(wx,wy);ctx.stroke();
+ ctx.save();ctx.translate(wx,wy);ctx.rotate(a2+bucket);ctx.fillStyle='#c98e0c';ctx.beginPath();ctx.moveTo(0,-11);ctx.lineTo(50,-8);ctx.lineTo(62,19);ctx.lineTo(12,27);ctx.closePath();ctx.fill();ctx.restore();
+ if(labels){
+   ctx.font='bold 14px system-ui';label('BOOM',(sx+ex)/2-20,(sy+ey)/2-15);label('STICK',(ex+wx)/2+8,(ey+wy)/2-15);label('BUCKET',wx+12,wy+38);
+ }
+ ctx.fillStyle='#000b';round(12,12,320,64,9);ctx.fillStyle='#fff';ctx.font='bold 13px system-ui';ctx.fillText('PHYSICAL JOYSTICK VERIFICATION',25,35);ctx.font='12px system-ui';ctx.fillText(lastCommand?'Last input: '+meaning[lastCommand]:'Move the requested joystick direction',25,56);
 }
-function label(text,x,y){const w=ctx.measureText(text).width+12;ctx.fillStyle='#f2b400';round(x,y,w,23,5);ctx.fillStyle='#111';ctx.fillText(text,x+6,y+17)}
 function round(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.fill()}
-
-let last=performance.now();
-function loop(now){const dt=Math.min(.032,(now-last)/1000);last=now;liveCommand();step(dt);draw();requestAnimationFrame(loop)}
-resetState();requestAnimationFrame(loop);
+function label(t,x,y){const w=ctx.measureText(t).width+12;ctx.fillStyle='#f1b500';round(x,y,w,23,5);ctx.fillStyle='#111';ctx.fillText(t,x+6,y+17)}
+function loop(){draw();requestAnimationFrame(loop)}
+render();requestAnimationFrame(loop);
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
 </script>
 </body></html>
