@@ -1,32 +1,21 @@
-# Excavator Trainer V4 — Control → Task
+# Excavator Trainer V4.1 — Corrected ISO Controls
 
-Cumulative upgrade.
+This is a cumulative replacement for V4.
 
-## Core learning model
-Every learned control is immediately tied to an outcome:
-1. Scoop material
-2. Lift loaded bucket
-3. Swing/carry load
-4. Dump into truck
-5. Full cycle: dig → lift → swing → dump
+## Fix
+The joystick labels in V4 described the ISO pattern correctly, but three visual motion signs in the simulator geometry were reversed.
 
-Wrong action during a task causes FAIL + restart of the same task.
+Corrected ISO behavior:
+- LEFT joystick forward / screen up = STICK OUT
+- LEFT joystick back / screen down = STICK IN
+- LEFT joystick left/right = SWING LEFT/RIGHT
+- RIGHT joystick forward / screen up = BOOM DOWN
+- RIGHT joystick back / screen down = BOOM UP
+- RIGHT joystick left = BUCKET CURL
+- RIGHT joystick right = BUCKET DUMP
 
-## Unlocking
-- Complete all four micro tasks → Full Cycle unlocks
-- Complete three clean full cycles → Position Machine unlocks
-- Travel/positioning remains the next training stage
+A LIVE INPUT readout has also been added so the learner can see the exact command the simulator is interpreting while moving either joystick.
 
-## ISO pattern
-Left joystick:
-- left/right = swing
-- forward = stick out
-- back = stick in
+All V4 micro-task/full-cycle learning logic is retained.
 
-Right joystick:
-- left = bucket curl
-- right = bucket dump
-- forward = boom down
-- back = boom up
-
-Training aid only. Verify the actual excavator control pattern and use supervised real-machine practice in a controlled area.
+Training aid only. Verify the actual machine's cab control-pattern decal/manual before real-machine practice.
