@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#101010">
+<title>Excavator Trainer V2</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{--bg:#0e0e0e;--panel:#171717;--line:#383838;--text:#f5f5f5;--muted:#aaa;--yellow:#f2b400;--good:#39c77a;--bad:#ef5955}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Arial,sans-serif;overscroll-behavior:none}
+body{min-height:100vh}
+header{height:50px;padding:0 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:#121212}
+h1{font-size:16px;margin:0}.badge{font-size:11px;font-weight:900;background:var(--yellow);color:#111;padding:5px 8px;border-radius:999px}
+main{max-width:1180px;margin:auto;padding:10px}
+.layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,.6fr);gap:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden}
+.pad{padding:12px}
+canvas{display:block;width:100%;height:auto;background:#9cc9d8;touch-action:none}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:10px}
+.joyWrap{text-align:center}.joyTitle{font-weight:850;font-size:13px;margin-bottom:5px}
+.joy{width:min(180px,42vw);height:min(180px,42vw);margin:auto;border:2px solid #555;border-radius:50%;position:relative;touch-action:none;background:radial-gradient(circle at center,#292929,#151515)}
+.knob{position:absolute;width:58px;height:58px;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);background:#555;border:3px solid #7a7a7a;box-shadow:0 5px 12px #0008}
+.map{font-size:10px;color:#aaa;line-height:1.35;margin-top:5px}
+.title{font-size:21px;font-weight:900;margin-bottom:5px}.mission{font-size:14px;line-height:1.45}
+.statgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin:10px 0}
+.stat{background:#101010;border:1px solid #303030;border-radius:10px;padding:9px;text-align:center}.stat b{font-size:20px;display:block}
+.small{font-size:11px;color:var(--muted)}
+.meter{height:9px;background:#333;border-radius:10px;overflow:hidden;margin:5px 0 10px}.meter div{height:100%;background:var(--yellow);width:0}
+.status{background:#101010;border:1px solid #333;border-radius:10px;padding:10px;min-height:58px;font-size:13px;line-height:1.4}
+.good{color:var(--good)}.bad{color:var(--bad)}.yellow{color:var(--yellow)}
+button,select{background:#292929;color:#fff;border:1px solid #555;border-radius:9px;padding:9px 10px;font-weight:750}
+button.primary{background:var(--yellow);color:#111;border:0}.row{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.tip{font-size:12px;line-height:1.35;border-left:3px solid var(--yellow);background:#211b0d;padding:8px;margin-top:10px}
+kbd{background:#333;border:1px solid #555;border-radius:4px;padding:1px 4px}
+@media(max-width:820px){.layout{grid-template-columns:1fr}.card.info{order:-1}.title{font-size:17px}.pad{padding:10px}.tip{display:none}}
+</style>
+</head>
+<body>
+<header><h1>EXCAVATOR TRAINER</h1><span class="badge">V2 · DIG & DUMP</span></header>
+<main>
+<div class="layout">
+<section class="card">
+<canvas id="sim" width="900" height="470"></canvas>
+<div class="controls">
+ <div class="joyWrap"><div class="joyTitle">LEFT JOYSTICK</div><div class="joy" id="leftJoy"><div class="knob"></div></div><div class="map">← SWING LEFT · → SWING RIGHT<br>↑ STICK OUT · ↓ STICK IN</div></div>
+ <div class="joyWrap"><div class="joyTitle">RIGHT JOYSTICK</div><div class="joy" id="rightJoy"><div class="knob"></div></div><div class="map">← BUCKET CURL · → BUCKET DUMP<br>↑ BOOM DOWN · ↓ BOOM UP</div></div>
+</div>
+</section>
+
+<aside class="card info"><div class="pad">
+<div class="title">Mission 1 — Dig & Dump</div>
+<div class="mission">Dig soil from the <b>green work zone</b>, keep it in the bucket, swing right and dump it into the truck.</div>
+<div class="meter"><div id="progress"></div></div>
+<div class="statgrid">
+ <div class="stat"><b id="loaded">0.0</b><span class="small">Truck load</span></div>
+ <div class="stat"><b id="bucketFill">0%</b><span class="small">Bucket fill</span></div>
+ <div class="stat"><b id="cycles">0</b><span class="small">Good cycles</span></div>
+ <div class="stat"><b id="spill">0%</b><span class="small">Spillage</span></div>
+</div>
+<div class="status" id="status"><span class="yellow"><b>Start practical.</b></span> Move both joysticks. Try to get the bucket teeth into the soil first.</div>
+<div class="row">
+ <button class="primary" id="reset">Reset mission</button>
+ <button id="labels">Hide labels</button>
+ <select id="speed"><option value="0.65">Slow hydraulics</option><option selected value="1">Normal</option><option value="1.35">Fast</option></select>
+</div>
+<div class="tip"><b>Practical cue:</b> Don't operate one function at a time. Real productivity comes from blending boom + stick + bucket while positioning the upper structure smoothly. This mission starts teaching that coordination.</div>
+<div class="tip"><b>Control assumption:</b> V2 is built around the common ISO excavator pattern. We can later add an FR375-specific pattern lock once the actual cab decal/manual confirms it.</div>
+</div></aside>
+</div>
+</main>
+
+<script>
+const cvs=document.getElementById('sim'),ctx=cvs.getContext('2d');
+const status=document.getElementById('status');
+let showLabels=true;
+const joy={L:{x:0,y:0},R:{x:0,y:0}};
+let state;
+
+function reset(){
+ state={
+  boom:-0.68, stick:1.22, bucket:0.15, swing:0,
+  fill:0, loaded:0, cycles:0, spill:0, carrying:false,
+  soil:100, lastDump:false, t:0
+ };
+ updateUI(); status.innerHTML='<span class="yellow"><b>Start practical.</b></span> Put the bucket teeth into the green work zone.';
+}
+reset();
+
+function bindJoystick(elId,key){
+ const el=document.getElementById(elId),knob=el.querySelector('.knob');
+ let id=null;
+ function setFrom(e){
+   const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+   let dx=e.clientX-cx,dy=e.clientY-cy,lim=r.width*.30;
+   const mag=Math.hypot(dx,dy)||1;if(mag>lim){dx*=lim/mag;dy*=lim/mag}
+   joy[key].x=dx/lim;joy[key].y=dy/lim;
+   knob.style.transform=`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px))`;
+ }
+ el.addEventListener('pointerdown',e=>{id=e.pointerId;el.setPointerCapture(id);setFrom(e)});
+ el.addEventListener('pointermove',e=>{if(e.pointerId===id)setFrom(e)});
+ function end(e){if(e.pointerId!==id)return;id=null;joy[key].x=joy[key].y=0;knob.style.transform='translate(-50%,-50%)'}
+ el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+}
+bindJoystick('leftJoy','L');bindJoystick('rightJoy','R');
+
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function geometry(){
+ const baseX=315+state.swing*150, baseY=310;
+ const L1=155,L2=130;
+ const elbowX=baseX+Math.cos(state.boom)*L1, elbowY=baseY+Math.sin(state.boom)*L1;
+ const a2=state.boom+state.stick;
+ const wristX=elbowX+Math.cos(a2)*L2, wristY=elbowY+Math.sin(a2)*L2;
+ const ba=a2+state.bucket;
+ const teethX=wristX+Math.cos(ba)*58, teethY=wristY+Math.sin(ba)*58;
+ return {baseX,baseY,elbowX,elbowY,wristX,wristY,teethX,teethY,a2,ba}
+}
+
+function step(dt){
+ const sp=+document.getElementById('speed').value;
+ // ISO: left X swing; left up/down stick. right X bucket; right up/down boom.
+ state.swing=clamp(state.swing+joy.L.x*dt*.42*sp,-1,1);
+ state.stick=clamp(state.stick + (-joy.L.y)*dt*.72*sp,.55,1.75);
+ state.bucket=clamp(state.bucket + joy.R.x*dt*1.15*sp,-.9,1.1);
+ state.boom=clamp(state.boom + joy.R.y*dt*.70*sp,-1.15,-.18);
+ const g=geometry();
+
+ const inSoil=g.teethX>475 && g.teethX<650 && g.teethY>344 && g.teethY<420;
+ const curling=joy.R.x<-.18;
+ if(inSoil && curling && state.soil>0 && state.fill<1){
+   const gain=dt*.48*Math.abs(joy.R.x);
+   state.fill=clamp(state.fill+gain,0,1);state.soil=clamp(state.soil-gain*8,0,100);
+   state.carrying=state.fill>.05;
+   status.innerHTML='<span class="good"><b>Bucket is loading.</b></span> Curl while bringing the stick in; then lift smoothly.';
+ }
+ // spilling when bucket too open while carrying
+ if(state.fill>.02 && state.bucket>.55 && !(g.teethX>690 && g.teethY<330)){
+   let loss=Math.min(state.fill,dt*.35);
+   state.fill-=loss;state.spill+=loss;
+ }
+ // truck dump zone: right side, bucket above truck and open
+ const overTruck=g.teethX>690 && g.teethX<865 && g.teethY>205 && g.teethY<345;
+ if(overTruck && joy.R.x>.22 && state.fill>.03){
+   const out=Math.min(state.fill,dt*.65*Math.abs(joy.R.x));
+   state.fill-=out;state.loaded+=out;
+   if(state.fill<.03 && !state.lastDump){
+     state.cycles++;state.lastDump=true;
+     status.innerHTML='<span class="good"><b>Good dump.</b></span> Return to the dig zone and repeat with less wasted movement.';
+   }
+ } else if(state.fill>.08) state.lastDump=false;
+ if(state.loaded>=5){
+   state.loaded=5;
+   status.innerHTML='<span class="good"><b>MISSION COMPLETE.</b></span> 5 bucket-equivalents delivered. Reset and beat your spillage/cycle control.';
+ }
+ state.t+=dt;updateUI();
+}
+
+function updateUI(){
+ document.getElementById('loaded').textContent=state.loaded.toFixed(1)+'/5';
+ document.getElementById('bucketFill').textContent=Math.round(state.fill*100)+'%';
+ document.getElementById('cycles').textContent=state.cycles;
+ document.getElementById('spill').textContent=Math.round(state.spill*100)+'%';
+ document.getElementById('progress').style.width=(state.loaded/5*100)+'%';
+}
+
+function draw(){
+ ctx.clearRect(0,0,cvs.width,cvs.height);
+ // sky/ground
+ ctx.fillStyle='#9bc9d9';ctx.fillRect(0,0,900,345);
+ ctx.fillStyle='#74563c';ctx.fillRect(0,345,900,125);
+ // dig zone
+ ctx.fillStyle='#5d8a48';ctx.fillRect(470,343,190,12);
+ ctx.fillStyle='#6e4e30';ctx.beginPath();ctx.moveTo(470,355);ctx.quadraticCurveTo(560,310+state.soil*.25,660,355);ctx.lineTo(660,430);ctx.lineTo(470,430);ctx.closePath();ctx.fill();
+ if(showLabels){ctx.fillStyle='#163a1d';ctx.font='bold 16px system-ui';ctx.fillText('DIG ZONE',520,335)}
+ // truck
+ ctx.fillStyle='#30343a';ctx.fillRect(710,320,145,50);ctx.fillRect(750,275,90,50);
+ ctx.fillStyle='#e8a915';ctx.fillRect(700,265,125,55);ctx.strokeStyle='#222';ctx.lineWidth=5;ctx.strokeRect(700,265,125,55);
+ ctx.fillStyle='#202020';ctx.beginPath();ctx.arc(735,375,18,0,Math.PI*2);ctx.arc(825,375,18,0,Math.PI*2);ctx.fill();
+ if(showLabels){ctx.fillStyle='#111';ctx.font='bold 15px system-ui';ctx.fillText('DUMP HERE',715,298)}
+ // excavator
+ const g=geometry();
+ ctx.fillStyle='#272727';roundRect(g.baseX-105,345,180,34,18,true);
+ ctx.fillStyle='#e7aa11';roundRect(g.baseX-55,270,100,78,8,true);
+ ctx.fillStyle='#294653';ctx.fillRect(g.baseX-39,282,54,38);
+ // boom/stick
+ ctx.strokeStyle='#e7aa11';ctx.lineWidth=22;ctx.lineCap='round';
+ ctx.beginPath();ctx.moveTo(g.baseX+18,g.baseY-18);ctx.lineTo(g.elbowX,g.elbowY);ctx.stroke();
+ ctx.lineWidth=18;ctx.beginPath();ctx.moveTo(g.elbowX,g.elbowY);ctx.lineTo(g.wristX,g.wristY);ctx.stroke();
+ // bucket
+ ctx.save();ctx.translate(g.wristX,g.wristY);ctx.rotate(g.ba);
+ ctx.fillStyle=state.fill>.05?'#9b6b32':'#c58e10';
+ ctx.beginPath();ctx.moveTo(0,-10);ctx.lineTo(48,-8);ctx.lineTo(60,18);ctx.lineTo(12,25);ctx.closePath();ctx.fill();ctx.restore();
+ // teeth indicator
+ ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(g.teethX,g.teethY,4,0,Math.PI*2);ctx.fill();
+ // HUD
+ ctx.fillStyle='#000a';roundRect(10,10,240,66,9,true);
+ ctx.fillStyle='#fff';ctx.font='bold 14px system-ui';ctx.fillText('ISO PATTERN · PRACTICE MODE',22,34);
+ ctx.font='12px system-ui';ctx.fillText(`Bucket ${Math.round(state.fill*100)}% · Truck ${state.loaded.toFixed(1)}/5`,22,56);
+}
+
+function roundRect(x,y,w,h,r,fill){
+ ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);if(fill)ctx.fill();
+}
+
+let last=performance.now();
+function loop(now){
+ const dt=Math.min(.032,(now-last)/1000);last=now;step(dt);draw();requestAnimationFrame(loop)
+}
+requestAnimationFrame(loop);
+document.getElementById('reset').onclick=reset;
+document.getElementById('labels').onclick=()=>{
+ showLabels=!showLabels;document.getElementById('labels').textContent=showLabels?'Hide labels':'Show labels';
+};
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+</script>
+</body></html>
