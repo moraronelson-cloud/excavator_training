@@ -1,25 +1,32 @@
-# Excavator Trainer V2
+# Excavator Trainer V4 — Control → Task
 
-Practical mobile-first excavator coordination simulator.
+Cumulative upgrade.
 
-## V2 additions
-- Continuous dual-joystick input
-- ISO excavator control pattern
-- Boom, stick, bucket and swing can be blended simultaneously
-- Diggable work zone
-- Bucket fill
-- Spillage
-- Truck dump zone
-- Five-bucket mission
-- Slow / normal / fast hydraulic-response modes
-- Hideable labels for memory training
-- Offline-capable PWA
+## Core learning model
+Every learned control is immediately tied to an outcome:
+1. Scoop material
+2. Lift loaded bucket
+3. Swing/carry load
+4. Dump into truck
+5. Full cycle: dig → lift → swing → dump
 
-## Current training assumption
-The simulator uses the common ISO pattern:
-- Left: swing + stick
-- Right: boom + bucket
+Wrong action during a task causes FAIL + restart of the same task.
 
-The exact real machine must still be verified from the cab decal/manual before using the simulator as muscle-memory preparation.
+## Unlocking
+- Complete all four micro tasks → Full Cycle unlocks
+- Complete three clean full cycles → Position Machine unlocks
+- Travel/positioning remains the next training stage
 
-Training aid only. Real-machine practice must be supervised and conducted in a controlled area.
+## ISO pattern
+Left joystick:
+- left/right = swing
+- forward = stick out
+- back = stick in
+
+Right joystick:
+- left = bucket curl
+- right = bucket dump
+- forward = boom down
+- back = boom up
+
+Training aid only. Verify the actual excavator control pattern and use supervised real-machine practice in a controlled area.
