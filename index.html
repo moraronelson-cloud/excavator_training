@@ -1,167 +1,21 @@
-<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#070909">
-<title>Excavator Trainer V8</title>
-<link rel="manifest" href="manifest.webmanifest">
-<style>
-:root{--bg:#070909;--panel:#0c1011;--line:#273034;--text:#eef2f3;--muted:#9ca6aa;--blue:#1698ff;--yellow:#ffb000;--green:#43d46b}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Arial,sans-serif}
-header{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #20282b;position:sticky;top:0;background:#070909ef;backdrop-filter:blur(10px);z-index:5}
-h1{margin:0;font-size:19px}.badge{border:1px solid #7a5600;color:#ffbd18;padding:6px 10px;border-radius:10px;font-weight:900;font-size:12px}.spacer{flex:1}
-.iconbtn{border:1px solid #30383c;background:#0c1011;color:#ddd;border-radius:10px;padding:8px 11px}
-main{max-width:1120px;margin:auto;padding:10px}
-.top{display:grid;grid-template-columns:2.2fr 1fr;gap:10px}
-.card{background:linear-gradient(#101516,#0b0f10);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.intro{padding:16px}.mode{font-weight:950;color:var(--green);font-size:18px}.desc{margin-top:6px;line-height:1.5}
-.test{float:right;margin-top:-45px;background:#0d1418;border:1px solid #176ab0;color:#35a9ff;border-radius:9px;padding:12px 16px;font-weight:850}
-.maps{display:grid;grid-template-columns:1fr 1fr;gap:22px;border-top:1px solid #20282b;margin-top:16px;padding-top:14px}
-.map{line-height:1.7}.map b.blue{color:#27a7ff}.map b.yellow{color:#ffb20d}
-.last{padding:15px}.last small{color:#aaa}.last strong{display:block;color:var(--green);font-size:18px;margin-top:8px}
-.sceneCard{margin-top:10px}.scene{position:relative;aspect-ratio:1000/618;background:#111;overflow:hidden}
-.scene img{width:100%;height:100%;object-fit:cover;display:block}
-.camera{position:absolute;right:12px;top:12px;background:#101416e8;border:1px solid #3a4347;border-radius:10px;padding:9px}
-.camera b{font-size:11px;color:#c7ced0;display:block;margin-bottom:6px}.camera button{background:#11191c;border:1px solid #3b4448;color:#ddd;border-radius:6px;padding:6px 9px;margin-right:3px}.camera button.on{background:#168ee4;color:#fff}
-.hud{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line)}
-.metric{padding:10px;text-align:center;border-right:1px solid #20282b;color:#aab2b5;font-size:10px}.metric:last-child{border-right:0}.metric b{display:block;color:#fff;font-size:13px;margin-top:3px}.metric .green{color:#71dc67}
-.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.joyCard{padding:12px}.joyTitle{text-align:center;font-size:17px;font-weight:950}.joyTitle.blue{color:#22a7ff}.joyTitle.yellow{color:#ffb20d}.joySub{text-align:center;color:#ddd;font-weight:800}
-.pad{width:min(360px,43vw);height:min(360px,43vw);max-width:100%;margin:8px auto;position:relative;border-radius:50%;border:2px solid #354148;background:radial-gradient(circle,#202629 0,#101416 63%,#080a0b 100%);touch-action:none}
-.joyCard.left .pad{box-shadow:0 0 0 1px #0e75b955}.joyCard.right .pad{box-shadow:0 0 0 1px #8d651d55}
-.ring{position:absolute;inset:18%;border:2px solid #49545a;border-radius:50%}.v,.h{position:absolute;background:#4b555a}.v{left:50%;top:18%;height:64%;width:2px}.h{top:50%;left:18%;width:64%;height:2px}
-.knob{position:absolute;width:32%;height:32%;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;border:4px solid #444;background:radial-gradient(circle at 38% 32%,#5b6164,#22272a 55%,#0b0d0e);box-shadow:0 8px 18px #000c}
-.dir{position:absolute;font-size:10px;font-weight:900}.up{top:5%;left:50%;transform:translateX(-50%)}.down{bottom:5%;left:50%;transform:translateX(-50%)}.leftd{left:3%;top:50%;transform:translateY(-50%)}.rightd{right:3%;top:50%;transform:translateY(-50%)}
-.live{text-align:center;color:#aaa;min-height:24px}.live b{color:var(--green)}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.actions button{border:1px solid #30383c;background:#0c1011;color:#fff;border-radius:10px;padding:12px 16px;font-weight:850}
-.tip{flex:1;min-width:250px;border-left:4px solid var(--yellow);background:#1b1609;padding:11px 14px;border-radius:7px;color:#ddd}
-@media(max-width:760px){header{padding:11px 10px}h1{font-size:16px}.iconbtn{display:none}.top{grid-template-columns:1fr}.test{float:none;margin:10px 0 0}.maps{gap:8px}.map{font-size:12px}.controls{gap:6px}.joyCard{padding:6px}.joyTitle{font-size:14px}.joySub{font-size:11px}.pad{width:45vw;height:45vw}.dir{font-size:8px}.hud{grid-template-columns:repeat(5,1fr)}.metric{padding:8px 2px;font-size:8px}.metric b{font-size:10px}}
-</style>
-</head>
-<body>
-<header><h1>EXCAVATOR TRAINER</h1><span class="badge">V8 · 3D LOOK</span><span class="spacer"></span><button class="iconbtn">? Help</button><button class="iconbtn">⚙ Settings</button></header>
-<main>
-<section class="top">
-  <div class="card intro">
-    <div class="mode">EXPLORE MODE ⓘ</div>
-    <div class="desc">Move either joystick. The machine follows your input. No wrong answers.</div>
-    <button class="test">Start 8-direction test ▶</button>
-    <div class="maps">
-      <div class="map"><b class="blue">LEFT JOYSTICK (Swing + Stick)</b><br>Forward = Stick Out<br>Back = Stick In<br>Left = Swing Left<br>Right = Swing Right</div>
-      <div class="map"><b class="yellow">RIGHT JOYSTICK (Boom + Bucket)</b><br>Forward = Boom Down<br>Back = Boom Up<br>Left = Bucket Curl<br>Right = Bucket Dump</div>
-    </div>
-  </div>
-  <div class="card last">
-    <small>LAST INPUT</small><strong id="last">—</strong><hr style="border-color:#273034">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:#aaa">
-      <div>Left joystick<br><b id="ll" style="color:#fff">—</b></div>
-      <div>Right joystick<br><b id="rr" style="color:#fff">—</b></div>
-    </div>
-  </div>
-</section>
-
-<section class="card sceneCard">
-  <div class="scene">
-    <img src="scene.webp" alt="Realistic quarry excavator training scene">
-    <div class="camera"><b>CAMERA</b><button class="on">1</button><button>2</button><button>3</button><button>Cab</button></div>
-  </div>
-  <div class="hud">
-    <div class="metric">ENGINE<b class="green">950 rpm</b></div>
-    <div class="metric">HYDRAULICS<b id="hyd" class="green">Holding</b></div>
-    <div class="metric">BUCKET LOAD<b id="load" class="green">0%</b></div>
-    <div class="metric">FUEL LEVEL<b>68%</b></div>
-    <div class="metric">MACHINE WEIGHT<b>37.2 t</b></div>
-  </div>
-</section>
-
-<section class="controls">
-  <div class="card joyCard left">
-    <div class="joyTitle blue">LEFT JOYSTICK</div><div class="joySub">Swing + Stick</div>
-    <div class="pad" id="lp"><div class="ring"></div><div class="v"></div><div class="h"></div><div class="dir up">STICK OUT ↑</div><div class="dir down">STICK IN ↓</div><div class="dir leftd">← SWING LEFT</div><div class="dir rightd">SWING RIGHT →</div><div class="knob"></div></div>
-    <div class="live" id="liveL">Centered</div>
-  </div>
-  <div class="card joyCard right">
-    <div class="joyTitle yellow">RIGHT JOYSTICK</div><div class="joySub">Boom + Bucket</div>
-    <div class="pad" id="rp"><div class="ring"></div><div class="v"></div><div class="h"></div><div class="dir up">BOOM DOWN ↑</div><div class="dir down">BOOM UP ↓</div><div class="dir leftd">← BUCKET CURL</div><div class="dir rightd">BUCKET DUMP →</div><div class="knob"></div></div>
-    <div class="live" id="liveR">Centered</div>
-  </div>
-</section>
-
-<div class="actions">
-  <button id="refill">⛰ Refill soil</button><button id="reset">↻ Reset scene</button>
-  <div class="tip">💡 <b>Realistic behavior:</b> joystick returns to center when released, but the excavator holds its position.</div>
-</div>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Excavator Trainer V9</title><style>
+body{margin:0;background:#070909;color:#eee;font-family:system-ui}header{padding:12px 14px;border-bottom:1px solid #222;display:flex;gap:10px;align-items:center}h1{font-size:17px;margin:0}.badge{color:#ffb000;border:1px solid #7a5600;border-radius:8px;padding:5px 8px;font-weight:900;font-size:11px}main{max-width:1100px;margin:auto;padding:8px}.card{background:#0d1112;border:1px solid #273034;border-radius:14px;overflow:hidden;margin-bottom:8px}.intro{padding:12px}.mode{color:#45d26f;font-weight:900}.maps{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;line-height:1.55;margin-top:8px}.maps b{color:#ffb000}.view{height:min(58vw,620px);min-height:320px;position:relative}canvas{width:100%;height:100%;display:block;touch-action:none}.cams{position:absolute;right:8px;top:8px;background:#0b0f10dd;padding:6px;border-radius:8px}.cams button,.actions button{background:#151a1c;color:#eee;border:1px solid #3a4347;border-radius:6px;padding:7px 9px}.hud{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #273034}.hud div{text-align:center;padding:8px;font-size:9px;color:#aaa}.hud b{display:block;color:#67dc71;font-size:12px}.controls{display:grid;grid-template-columns:1fr 1fr;gap:7px}.joy{padding:7px}.title{text-align:center;font-weight:900}.left .title{color:#169cff}.right .title{color:#ffb000}.pad{width:min(330px,44vw);height:min(330px,44vw);margin:auto;border-radius:50%;position:relative;border:2px solid #394247;background:radial-gradient(circle,#23292c,#101415 67%,#090b0c);touch-action:none}.ring{position:absolute;inset:18%;border:2px solid #4a5459;border-radius:50%}.knob{position:absolute;width:31%;height:31%;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 40% 35%,#666,#24292b 60%,#111);border:4px solid #444}.dir{position:absolute;font-size:9px;font-weight:900}.up{top:5%;left:50%;transform:translateX(-50%)}.dn{bottom:5%;left:50%;transform:translateX(-50%)}.lf{left:3%;top:50%;transform:translateY(-50%)}.rt{right:3%;top:50%;transform:translateY(-50%)}.live{text-align:center;color:#aaa;font-size:11px;min-height:22px}.actions{display:flex;gap:7px;flex-wrap:wrap}.tip{padding:10px;border-left:4px solid #ffb000;background:#211a08;flex:1;font-size:12px}@media(max-width:700px){.maps{font-size:11px}.view{height:62vw;min-height:285px}.dir{font-size:7px}}
+</style></head><body><header><h1>EXCAVATOR TRAINER</h1><span class="badge">V9 · TRUE 3D</span></header><main>
+<section class="card intro"><div class="mode">LIVE 3D EXPLORE MODE</div><div style="font-size:12px;color:#aaa">Boom, stick, bucket and upper structure are separate moving 3D parts. Release the joystick and the machine holds its position.</div><div class="maps"><div><b>LEFT</b><br>Forward = Stick Out<br>Back = Stick In<br>Left/Right = Swing</div><div><b>RIGHT</b><br>Forward = Boom Down<br>Back = Boom Up<br>Left = Bucket Curl<br>Right = Bucket Dump</div></div></section>
+<section class="card"><div class="view"><canvas id="c"></canvas><div class="cams"><button id="c1">1</button><button id="c2">2</button><button id="c3">3</button><button id="cab">Cab</button></div></div><div class="hud"><div>HYDRAULICS<b id="hyd">Holding</b></div><div>BUCKET<b id="load">0%</b></div><div>TRUCK<b id="truck">0.0 t</b></div><div>LAST INPUT<b id="last">—</b></div></div></section>
+<section class="controls"><div class="card joy left"><div class="title">LEFT JOYSTICK</div><div class="pad" id="lp"><div class="ring"></div><div class="dir up">STICK OUT ↑</div><div class="dir dn">↓ STICK IN</div><div class="dir lf">← SWING</div><div class="dir rt">SWING →</div><div class="knob"></div></div><div class="live" id="liveL">Centered</div></div><div class="card joy right"><div class="title">RIGHT JOYSTICK</div><div class="pad" id="rp"><div class="ring"></div><div class="dir up">BOOM DOWN ↑</div><div class="dir dn">↓ BOOM UP</div><div class="dir lf">← CURL</div><div class="dir rt">DUMP →</div><div class="knob"></div></div><div class="live" id="liveR">Centered</div></div></section>
+<div class="actions"><button id="reset">Reset machine</button><button id="refill">Refill soil</button><div class="tip"><b>True 3D:</b> hold a joystick to move the joint gradually. Release it and hydraulic flow stops, while the joint stays at that angle.</div></div>
 </main>
-
-<script>
-const $=id=>document.getElementById(id);
-const joy={L:{x:0,y:0},R:{x:0,y:0}};
-const state={boom:.5,stick:.5,bucket:.18,swing:.5,load:0};
-const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-
-function bind(id,key,liveId){
-  const el=$(id),knob=el.querySelector('.knob'),live=$(liveId);
-  let pid=null,cx=0,cy=0,lim=0;
-  function mv(e){
-    if(pid===null)return;
-    let dx=e.clientX-cx,dy=e.clientY-cy;
-    const m=Math.hypot(dx,dy)||1;
-    if(m>lim){dx*=lim/m;dy*=lim/m}
-    joy[key].x=dx/lim;joy[key].y=dy/lim;
-    knob.style.transform=`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px))`;
-    const d=.17,parts=[];
-    if(key==='L'){
-      if(joy.L.x<-d)parts.push('SWING LEFT');
-      if(joy.L.x>d)parts.push('SWING RIGHT');
-      if(joy.L.y<-d)parts.push('STICK OUT');
-      if(joy.L.y>d)parts.push('STICK IN');
-    }else{
-      if(joy.R.x<-d)parts.push('BUCKET CURL');
-      if(joy.R.x>d)parts.push('BUCKET DUMP');
-      if(joy.R.y<-d)parts.push('BOOM DOWN');
-      if(joy.R.y>d)parts.push('BOOM UP');
-    }
-    live.innerHTML=parts.length?'<b>'+parts.join(' + ')+'</b>':'Centered';
-    if(parts.length){
-      const cmd=parts.join(' + ');
-      $('last').textContent=cmd;
-      if(key==='L')$('ll').textContent=cmd; else $('rr').textContent=cmd;
-    }
-  }
-  el.addEventListener('pointerdown',e=>{let r=el.getBoundingClientRect();cx=r.left+r.width/2;cy=r.top+r.height/2;lim=r.width*.31;pid=e.pointerId;el.setPointerCapture(pid);mv(e)});
-  el.addEventListener('pointermove',mv);
-  function end(e){if(e.pointerId!==pid)return;pid=null;joy[key].x=joy[key].y=0;knob.style.transform='translate(-50%,-50%)';live.textContent='Centered'}
-  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
-}
-bind('lp','L','liveL');bind('rp','R','liveR');
-
-let prev=performance.now();
-function loop(t){
-  let dt=Math.min(.04,(t-prev)/1000);prev=t;
-  const d=.08;
-  const lx=Math.abs(joy.L.x)>d?joy.L.x:0, ly=Math.abs(joy.L.y)>d?joy.L.y:0;
-  const rx=Math.abs(joy.R.x)>d?joy.R.x:0, ry=Math.abs(joy.R.y)>d?joy.R.y:0;
-  const flow=!!(lx||ly||rx||ry);
-
-  state.swing=clamp(state.swing+lx*dt*.35,0,1);
-  state.stick=clamp(state.stick-ly*dt*.38,0,1);
-  state.bucket=clamp(state.bucket-rx*dt*.52,0,1);
-  state.boom=clamp(state.boom+ry*dt*.38,0,1);
-
-  if(rx<-.25 && state.load<1) state.load=clamp(state.load+dt*.08*Math.abs(rx),0,1);
-  if(rx>.25 && state.load>0) state.load=clamp(state.load-dt*.12*Math.abs(rx),0,1);
-
-  $('hyd').textContent=flow?'Flowing':'Holding';
-  $('load').textContent=Math.round(state.load*100)+'%';
-  requestAnimationFrame(loop);
-}
-requestAnimationFrame(loop);
-
-$('reset').onclick=()=>{Object.assign(state,{boom:.5,stick:.5,bucket:.18,swing:.5,load:0});$('last').textContent='—';$('ll').textContent='—';$('rr').textContent='—'};
-$('refill').onclick=()=>{$('load').textContent=Math.round(state.load*100)+'%'};
-
-if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
-</script>
-</body>
-</html>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';import{OrbitControls}from'three/addons/controls/OrbitControls.js';const $=x=>document.getElementById(x),R=new THREE.WebGLRenderer({canvas:$('c'),antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.shadowMap.enabled=true;R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;const S=new THREE.Scene();S.background=new THREE.Color(0x91bfd2);S.fog=new THREE.Fog(0xa9bdba,35,85);const C=new THREE.PerspectiveCamera(45,1,.1,150);C.position.set(15,8,17);const O=new OrbitControls(C,R.domElement);O.target.set(0,3,0);O.enableDamping=true;O.enablePan=false;S.add(new THREE.HemisphereLight(0xdbefff,0x5b4938,2.2));const sun=new THREE.DirectionalLight(0xffffff,3);sun.position.set(-12,20,10);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);S.add(sun);
+const M={y:new THREE.MeshStandardMaterial({color:0xe4a10b,roughness:.5,metalness:.35}),yd:new THREE.MeshStandardMaterial({color:0xa96d03,roughness:.6,metalness:.4}),k:new THREE.MeshStandardMaterial({color:0x171a1b,roughness:.7,metalness:.45}),d:new THREE.MeshStandardMaterial({color:0x2b2d2e,roughness:.55,metalness:.6}),s:new THREE.MeshStandardMaterial({color:0xaeb4b6,roughness:.28,metalness:.9}),g:new THREE.MeshPhysicalMaterial({color:0x29444e,transparent:true,opacity:.65,roughness:.15}),soil:new THREE.MeshStandardMaterial({color:0x6c4a2d,roughness:1}),truck:new THREE.MeshStandardMaterial({color:0x334d2e,roughness:.7})};
+function m(g,mat,p=[0,0,0],r=[0,0,0]){let o=new THREE.Mesh(g,mat);o.position.set(...p);o.rotation.set(...r);o.castShadow=o.receiveShadow=true;return o}function b(w,h,d,mat,p,r){return m(new THREE.BoxGeometry(w,h,d),mat,p,r)}function beam(len,w,h,mat){return b(len,h,w,mat,[len/2,0,0])}
+S.add(m(new THREE.PlaneGeometry(120,120),new THREE.MeshStandardMaterial({color:0x6a5139,roughness:1}),[0,0,0],[-Math.PI/2,0,0]));for(let i=0;i<12;i++)S.add(m(new THREE.ConeGeometry(4+Math.random()*4,4+Math.random()*4,7),new THREE.MeshStandardMaterial({color:0x53664b,roughness:1}),[-30+i*6,1.8,-28-Math.random()*7]));
+const mach=new THREE.Group();mach.position.set(-2,0,0);S.add(mach);for(let z of[-1.35,1.35]){mach.add(b(5.8,.8,.72,M.k,[0,.55,z]));for(let i=-2;i<=2;i++)mach.add(m(new THREE.CylinderGeometry(.32,.32,.74,16),M.d,[i*1.05,.55,z],[Math.PI/2,0,0]))}mach.add(b(4.5,.45,2.35,M.d,[0,1,0]));const house=new THREE.Group();house.position.set(0,1.28,0);mach.add(house);house.add(b(4.7,1.55,2.8,M.y,[.3,.9,0]));house.add(m(new THREE.CylinderGeometry(1.28,1.28,2.75,24),M.yd,[-1.75,.95,0],[Math.PI/2,0,0]));house.add(b(1.5,1.95,2.25,M.k,[1.45,1.3,-.1]));house.add(b(1.25,1.45,.03,M.g,[1.46,1.48,1.04]));house.add(b(.03,1.45,1.85,M.g,[2.18,1.48,-.05]));const bp=new THREE.Group();bp.position.set(1.9,1.7,0);house.add(bp);const BL=6.8;bp.add(beam(BL,.62,.78,M.y));bp.add(m(new THREE.CylinderGeometry(.1,.1,4,16),M.k,[2,.55,-.45],[0,0,Math.PI/2]));bp.add(m(new THREE.CylinderGeometry(.055,.055,3.1,16),M.s,[3.2,.65,-.45],[0,0,Math.PI/2]));const sp=new THREE.Group();sp.position.set(BL,0,0);bp.add(sp);const SL=5.2;sp.add(beam(SL,.5,.62,M.y));sp.add(m(new THREE.CylinderGeometry(.08,.08,3.1,16),M.k,[1.7,.35,-.35],[0,0,Math.PI/2]));const kp=new THREE.Group();kp.position.set(SL,0,0);sp.add(kp);const ks=new THREE.Shape();ks.moveTo(-.2,.7);ks.lineTo(1.1,.55);ks.lineTo(1.65,-.45);ks.lineTo(.55,-1.2);ks.lineTo(-.55,-.65);ks.closePath();let kg=new THREE.ExtrudeGeometry(ks,{depth:1.45,bevelEnabled:true,bevelSize:.08,bevelThickness:.08});kg.translate(0,0,-.725);kp.add(m(kg,M.yd));
+const soil=new THREE.Group();S.add(soil);function fillSoil(){soil.clear();for(let i=0;i<100;i++){let a=Math.random()*6.28,r=Math.sqrt(Math.random())*3.4,y=(1-r/4)*1.2*Math.random()+.08;soil.add(m(new THREE.DodecahedronGeometry(.18+Math.random()*.3,0),M.soil,[5+Math.cos(a)*r,y,-3+Math.sin(a)*r],[Math.random(),Math.random(),Math.random()]))}}fillSoil();const tr=new THREE.Group();tr.position.set(8,0,2.5);S.add(tr);tr.add(b(4.8,.55,2.3,M.k,[0,.65,0]));tr.add(b(1.5,1.8,2.15,M.truck,[-1.65,1.6,0]));tr.add(b(3.5,1.6,2.4,M.truck,[1.25,1.7,0]));
+const joy={L:{x:0,y:0},R:{x:0,y:0}},st={boom:-.45,stick:-.58,bucket:-.28,swing:0,load:0,truck:0};const cl=(v,a,b)=>Math.max(a,Math.min(b,v));function joints(){house.rotation.y=st.swing;bp.rotation.z=st.boom;sp.rotation.z=st.stick;kp.rotation.z=st.bucket}joints();
+function bind(id,key,live){let el=$(id),kn=el.querySelector('.knob'),lv=$(live),pid=null,cx=0,cy=0,lim=0;function mv(e){if(pid===null)return;let dx=e.clientX-cx,dy=e.clientY-cy,mm=Math.hypot(dx,dy)||1;if(mm>lim){dx*=lim/mm;dy*=lim/mm}joy[key].x=dx/lim;joy[key].y=dy/lim;kn.style.transform=`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px))`;let d=.16,p=[];if(key==='L'){if(joy.L.x<-d)p.push('SWING LEFT');if(joy.L.x>d)p.push('SWING RIGHT');if(joy.L.y<-d)p.push('STICK OUT');if(joy.L.y>d)p.push('STICK IN')}else{if(joy.R.x<-d)p.push('BUCKET CURL');if(joy.R.x>d)p.push('BUCKET DUMP');if(joy.R.y<-d)p.push('BOOM DOWN');if(joy.R.y>d)p.push('BOOM UP')}lv.innerHTML=p.length?'<b>'+p.join(' + ')+'</b>':'Centered';if(p.length)$('last').textContent=p.join(' + ')}el.addEventListener('pointerdown',e=>{let q=el.getBoundingClientRect();cx=q.left+q.width/2;cy=q.top+q.height/2;lim=q.width*.31;pid=e.pointerId;el.setPointerCapture(pid);mv(e)});el.addEventListener('pointermove',mv);function end(e){if(e.pointerId!==pid)return;pid=null;joy[key].x=joy[key].y=0;kn.style.transform='translate(-50%,-50%)';lv.textContent='Centered'}el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end)}bind('lp','L','liveL');bind('rp','R','liveR');
+function tip(){kp.updateWorldMatrix(true,true);return kp.localToWorld(new THREE.Vector3(1.7,-.65,0))}function physics(dt){let d=.07,lx=Math.abs(joy.L.x)>d?joy.L.x:0,ly=Math.abs(joy.L.y)>d?joy.L.y:0,rx=Math.abs(joy.R.x)>d?joy.R.x:0,ry=Math.abs(joy.R.y)>d?joy.R.y:0;st.swing=cl(st.swing+lx*dt*.55,-1.15,1.15);st.stick=cl(st.stick+ly*dt*.7,-1.55,.1);st.bucket=cl(st.bucket-rx*dt*1.15,-1.45,.85);st.boom=cl(st.boom-ry*dt*.62,-1.05,.08);joints();$('hyd').textContent=(lx||ly||rx||ry)?'Flowing':'Holding';let p=tip(),sd=Math.hypot(p.x-5,p.z+3);if(sd<4&&p.y<1.4&&rx<-.18&&st.load<1){st.load=cl(st.load+dt*.18*Math.abs(rx),0,1);if(soil.children.length&&Math.random()<.15)soil.remove(soil.children.at(-1))}let q=tr.worldToLocal(p.clone()),over=Math.abs(q.x-1.2)<2&&Math.abs(q.z)<1.5&&q.y>1.4&&q.y<5;if(over&&rx>.2&&st.load>0){let out=Math.min(st.load,dt*.35*Math.abs(rx));st.load-=out;st.truck+=out*2.1}$('load').textContent=Math.round(st.load*100)+'%';$('truck').textContent=st.truck.toFixed(1)+' t'}
+function rs(){let q=$('c').getBoundingClientRect();R.setSize(q.width,q.height,false);C.aspect=q.width/q.height;C.updateProjectionMatrix()}new ResizeObserver(rs).observe($('c'));rs();let last=performance.now();function loop(t){let dt=Math.min(.035,(t-last)/1000);last=t;physics(dt);O.update();R.render(S,C);requestAnimationFrame(loop)}requestAnimationFrame(loop);function cam(p,t){C.position.set(...p);O.target.set(...t);O.update()}$('c1').onclick=()=>cam([15,8,17],[0,3,0]);$('c2').onclick=()=>cam([-15,8,15],[0,3,0]);$('c3').onclick=()=>cam([3,12,23],[1,3,0]);$('cab').onclick=()=>cam([.5,4.2,-1.3],[7,2.5,-1]);$('reset').onclick=()=>{Object.assign(st,{boom:-.45,stick:-.58,bucket:-.28,swing:0,load:0,truck:0});joints();$('last').textContent='—'};$('refill').onclick=fillSoil;
+</script></body></html>

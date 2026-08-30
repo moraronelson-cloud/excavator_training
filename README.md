@@ -1,14 +1,15 @@
-# Excavator Trainer V8 — Photoreal Simulator UI
+# Excavator Trainer V9 — True Interactive 3D
 
-This build puts the approved photoreal simulator look into the actual app.
+This is the first genuinely articulated 3D build. The upper structure, boom, stick and bucket are separate 3D objects driven directly by the joysticks.
 
-- Photoreal quarry/excavator scene
-- Same dual touch joysticks
-- Persistent hydraulic state in logic
-- Live input panel
-- Hydraulic Flowing/Holding status
-- Bucket load state
-- Camera-style controls
-- Mobile responsive simulator dashboard
+- continuous hydraulic movement
+- release joystick = hydraulic flow stops, joint holds position
+- 3D lighting, shadows, terrain and cab glass
+- 3D soil pile and dump truck
+- bucket loading/dumping logic
+- camera 1/2/3 and cab view
+- same easy touch joysticks
 
-Note: the current photoreal machine image is a visual scene layer. The joystick/hydraulic state is live and persistent, but true photoreal articulated boom/stick/bucket animation requires a dedicated 3D excavator model/WebGL asset pipeline.
+The excavator is currently a custom procedural 3D model, not yet a licensed high-detail LOVOL FR375F GLB. Replacing the meshes with a high-detail model later will preserve the same joint/physics architecture.
+
+Three.js loads from jsDelivr, so the app needs internet access for the 3D engine.
