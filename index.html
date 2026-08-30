@@ -1,320 +1,166 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#0b0b0b">
-<title>Excavator Trainer V7 — Realistic Hydraulics</title>
+<meta name="theme-color" content="#070909">
+<title>Excavator Trainer V8</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
-:root{
-  --bg:#080808;--panel:#121212;--panel2:#191919;--line:#303030;--text:#f7f7f7;--muted:#aaa;
-  --yellow:#f3b200;--yellow2:#d99500;--good:#45d07f;--bad:#ef5350;--blue:#4ea5ff;
-}
+:root{--bg:#070909;--panel:#0c1011;--line:#273034;--text:#eef2f3;--muted:#9ca6aa;--blue:#1698ff;--yellow:#ffb000;--green:#43d46b}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Arial,sans-serif;overscroll-behavior:none}
-body{min-height:100vh}
-header{height:58px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #242424;background:#0d0d0d;position:sticky;top:0;z-index:20}
-header h1{font-size:17px;margin:0;font-weight:950;letter-spacing:.3px}
-.badge{background:var(--yellow);color:#111;padding:6px 9px;border-radius:10px;font-size:11px;font-weight:950}
-main{max-width:1180px;margin:auto;padding:10px}
-.topcard,.simcard,.controlCard{background:linear-gradient(#141414,#0f0f0f);border:1px solid var(--line);border-radius:18px;overflow:hidden}
-.topcard{padding:12px;margin-bottom:10px}
-.toprow{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.mode{font-size:16px;font-weight:950;color:var(--yellow)} .muted{color:var(--muted);font-size:12px;line-height:1.45}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.legend{background:#101010;border:1px solid #292929;border-radius:12px;padding:10px;font-size:12px;line-height:1.5}
-.legend b{color:var(--yellow)}
-.statusbox{background:#0f0f0f;border:1px solid #2d2d2d;border-radius:12px;padding:10px;font-size:12px;line-height:1.5}
-.statusbox strong{color:var(--good)}
-.simcard{margin-bottom:10px}
-.simhead{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px solid #282828;font-size:12px}
-.simhead b{color:var(--yellow)}
-canvas{display:block;width:100%;height:auto;background:#9cc6d7}
-.machinebar{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #292929;background:#101010}
-.metric{padding:9px 8px;text-align:center;border-right:1px solid #252525;font-size:11px;color:#aaa}.metric:last-child{border-right:0}.metric b{display:block;color:#fff;font-size:13px;margin-top:2px}
-.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.controlCard{padding:10px}
-.controlTitle{text-align:center;font-size:14px;font-weight:950}.controlTitle span{display:block;font-size:11px;color:var(--yellow);margin-top:2px}
-.pad{
-  width:min(330px,44vw);height:min(330px,44vw);max-width:100%;margin:10px auto 4px;position:relative;
-  border-radius:50%;background:radial-gradient(circle at 50% 48%,#242424 0,#171717 58%,#0f0f0f 100%);
-  border:2px solid #3a3a3a;touch-action:none;user-select:none;box-shadow:inset 0 0 0 9px #111,0 10px 25px #0007;
-}
-.ring{position:absolute;inset:17%;border:2px solid #484848;border-radius:50%;pointer-events:none}
-.crossV,.crossH{position:absolute;background:#3b3b3b;pointer-events:none}.crossV{width:2px;height:60%;left:50%;top:20%}.crossH{height:2px;width:60%;left:20%;top:50%}
-.knob{position:absolute;width:31%;height:31%;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;
- background:radial-gradient(circle at 42% 34%,#626262,#303030 52%,#161616 100%);border:3px solid #555;box-shadow:0 6px 14px #000b}
-.dir{position:absolute;font-size:10px;font-weight:900;color:#ddd;pointer-events:none;text-align:center}
-.up{top:5%;left:50%;transform:translateX(-50%)}.down{bottom:5%;left:50%;transform:translateX(-50%)}.left{left:3%;top:50%;transform:translateY(-50%)}.right{right:3%;top:50%;transform:translateY(-50%)}
-.pad.active{border-color:var(--blue);box-shadow:inset 0 0 0 9px #111,0 0 0 2px #1f70bb,0 10px 25px #0008}
-.live{text-align:center;min-height:32px;font-size:12px;color:#aaa}.live b{color:var(--good)}
-.bottom{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-button{border:1px solid #444;background:#242424;color:#fff;border-radius:10px;padding:9px 12px;font-weight:850}
-button.primary{background:var(--yellow);color:#111;border-color:var(--yellow)}
-.tip{margin-top:10px;border-left:3px solid var(--yellow);background:#201a08;padding:9px 10px;font-size:12px;line-height:1.45}
-@media(max-width:760px){
- main{padding:7px}.topcard{padding:10px}.toprow{display:block}.grid2{grid-template-columns:1fr 1fr;gap:6px}
- .controls{gap:6px}.controlCard{padding:6px}.controlTitle{font-size:12px}
- .pad{width:45vw;height:45vw;margin-top:6px}.dir{font-size:8px}
- .machinebar{grid-template-columns:repeat(4,1fr)}.metric{font-size:9px;padding:7px 3px}.metric b{font-size:11px}
-}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Arial,sans-serif}
+header{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #20282b;position:sticky;top:0;background:#070909ef;backdrop-filter:blur(10px);z-index:5}
+h1{margin:0;font-size:19px}.badge{border:1px solid #7a5600;color:#ffbd18;padding:6px 10px;border-radius:10px;font-weight:900;font-size:12px}.spacer{flex:1}
+.iconbtn{border:1px solid #30383c;background:#0c1011;color:#ddd;border-radius:10px;padding:8px 11px}
+main{max-width:1120px;margin:auto;padding:10px}
+.top{display:grid;grid-template-columns:2.2fr 1fr;gap:10px}
+.card{background:linear-gradient(#101516,#0b0f10);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.intro{padding:16px}.mode{font-weight:950;color:var(--green);font-size:18px}.desc{margin-top:6px;line-height:1.5}
+.test{float:right;margin-top:-45px;background:#0d1418;border:1px solid #176ab0;color:#35a9ff;border-radius:9px;padding:12px 16px;font-weight:850}
+.maps{display:grid;grid-template-columns:1fr 1fr;gap:22px;border-top:1px solid #20282b;margin-top:16px;padding-top:14px}
+.map{line-height:1.7}.map b.blue{color:#27a7ff}.map b.yellow{color:#ffb20d}
+.last{padding:15px}.last small{color:#aaa}.last strong{display:block;color:var(--green);font-size:18px;margin-top:8px}
+.sceneCard{margin-top:10px}.scene{position:relative;aspect-ratio:1000/618;background:#111;overflow:hidden}
+.scene img{width:100%;height:100%;object-fit:cover;display:block}
+.camera{position:absolute;right:12px;top:12px;background:#101416e8;border:1px solid #3a4347;border-radius:10px;padding:9px}
+.camera b{font-size:11px;color:#c7ced0;display:block;margin-bottom:6px}.camera button{background:#11191c;border:1px solid #3b4448;color:#ddd;border-radius:6px;padding:6px 9px;margin-right:3px}.camera button.on{background:#168ee4;color:#fff}
+.hud{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line)}
+.metric{padding:10px;text-align:center;border-right:1px solid #20282b;color:#aab2b5;font-size:10px}.metric:last-child{border-right:0}.metric b{display:block;color:#fff;font-size:13px;margin-top:3px}.metric .green{color:#71dc67}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.joyCard{padding:12px}.joyTitle{text-align:center;font-size:17px;font-weight:950}.joyTitle.blue{color:#22a7ff}.joyTitle.yellow{color:#ffb20d}.joySub{text-align:center;color:#ddd;font-weight:800}
+.pad{width:min(360px,43vw);height:min(360px,43vw);max-width:100%;margin:8px auto;position:relative;border-radius:50%;border:2px solid #354148;background:radial-gradient(circle,#202629 0,#101416 63%,#080a0b 100%);touch-action:none}
+.joyCard.left .pad{box-shadow:0 0 0 1px #0e75b955}.joyCard.right .pad{box-shadow:0 0 0 1px #8d651d55}
+.ring{position:absolute;inset:18%;border:2px solid #49545a;border-radius:50%}.v,.h{position:absolute;background:#4b555a}.v{left:50%;top:18%;height:64%;width:2px}.h{top:50%;left:18%;width:64%;height:2px}
+.knob{position:absolute;width:32%;height:32%;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;border:4px solid #444;background:radial-gradient(circle at 38% 32%,#5b6164,#22272a 55%,#0b0d0e);box-shadow:0 8px 18px #000c}
+.dir{position:absolute;font-size:10px;font-weight:900}.up{top:5%;left:50%;transform:translateX(-50%)}.down{bottom:5%;left:50%;transform:translateX(-50%)}.leftd{left:3%;top:50%;transform:translateY(-50%)}.rightd{right:3%;top:50%;transform:translateY(-50%)}
+.live{text-align:center;color:#aaa;min-height:24px}.live b{color:var(--green)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.actions button{border:1px solid #30383c;background:#0c1011;color:#fff;border-radius:10px;padding:12px 16px;font-weight:850}
+.tip{flex:1;min-width:250px;border-left:4px solid var(--yellow);background:#1b1609;padding:11px 14px;border-radius:7px;color:#ddd}
+@media(max-width:760px){header{padding:11px 10px}h1{font-size:16px}.iconbtn{display:none}.top{grid-template-columns:1fr}.test{float:none;margin:10px 0 0}.maps{gap:8px}.map{font-size:12px}.controls{gap:6px}.joyCard{padding:6px}.joyTitle{font-size:14px}.joySub{font-size:11px}.pad{width:45vw;height:45vw}.dir{font-size:8px}.hud{grid-template-columns:repeat(5,1fr)}.metric{padding:8px 2px;font-size:8px}.metric b{font-size:10px}}
 </style>
 </head>
 <body>
-<header><h1>EXCAVATOR TRAINER</h1><span class="badge">V7 · REALISTIC HYDRAULICS</span></header>
-
+<header><h1>EXCAVATOR TRAINER</h1><span class="badge">V8 · 3D LOOK</span><span class="spacer"></span><button class="iconbtn">? Help</button><button class="iconbtn">⚙ Settings</button></header>
 <main>
-<section class="topcard">
-  <div class="toprow">
-    <div>
-      <div class="mode">EXPLORE MODE</div>
-      <div class="muted">Move either joystick freely. The machine follows continuously and <b>holds its position when you release the control</b>.</div>
+<section class="top">
+  <div class="card intro">
+    <div class="mode">EXPLORE MODE ⓘ</div>
+    <div class="desc">Move either joystick. The machine follows your input. No wrong answers.</div>
+    <button class="test">Start 8-direction test ▶</button>
+    <div class="maps">
+      <div class="map"><b class="blue">LEFT JOYSTICK (Swing + Stick)</b><br>Forward = Stick Out<br>Back = Stick In<br>Left = Swing Left<br>Right = Swing Right</div>
+      <div class="map"><b class="yellow">RIGHT JOYSTICK (Boom + Bucket)</b><br>Forward = Boom Down<br>Back = Boom Up<br>Left = Bucket Curl<br>Right = Bucket Dump</div>
     </div>
-    <button class="primary" id="resetMachine">Reset machine</button>
   </div>
-  <div class="grid2">
-    <div class="legend"><b>LEFT STICK</b><br>Forward = stick OUT<br>Back = stick IN<br>Left / Right = swing</div>
-    <div class="legend"><b>RIGHT STICK</b><br>Forward = boom DOWN<br>Back = boom UP<br>Left = bucket CURL<br>Right = bucket DUMP</div>
+  <div class="card last">
+    <small>LAST INPUT</small><strong id="last">—</strong><hr style="border-color:#273034">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:#aaa">
+      <div>Left joystick<br><b id="ll" style="color:#fff">—</b></div>
+      <div>Right joystick<br><b id="rr" style="color:#fff">—</b></div>
+    </div>
   </div>
-  <div class="statusbox" id="status"><strong>Ready.</strong> Try curling the bucket, release the joystick, and watch it stay curled.</div>
 </section>
 
-<section class="simcard">
-  <div class="simhead"><span><b>LIVE MACHINE</b> · side training view</span><span id="lastInput">No input</span></div>
-  <canvas id="sim" width="1100" height="560"></canvas>
-  <div class="machinebar">
-    <div class="metric">ENGINE<b>950 rpm</b></div>
-    <div class="metric">HYDRAULICS<b id="hyd">Neutral</b></div>
-    <div class="metric">BUCKET<b id="fill">0%</b></div>
-    <div class="metric">TRUCK<b id="truck">0.0 t</b></div>
+<section class="card sceneCard">
+  <div class="scene">
+    <img src="scene.webp" alt="Realistic quarry excavator training scene">
+    <div class="camera"><b>CAMERA</b><button class="on">1</button><button>2</button><button>3</button><button>Cab</button></div>
+  </div>
+  <div class="hud">
+    <div class="metric">ENGINE<b class="green">950 rpm</b></div>
+    <div class="metric">HYDRAULICS<b id="hyd" class="green">Holding</b></div>
+    <div class="metric">BUCKET LOAD<b id="load" class="green">0%</b></div>
+    <div class="metric">FUEL LEVEL<b>68%</b></div>
+    <div class="metric">MACHINE WEIGHT<b>37.2 t</b></div>
   </div>
 </section>
 
 <section class="controls">
-  <div class="controlCard">
-    <div class="controlTitle">LEFT JOYSTICK<span>Swing + Stick</span></div>
-    <div class="pad" id="leftPad">
-      <div class="ring"></div><div class="crossV"></div><div class="crossH"></div>
-      <div class="dir up">STICK OUT ↑</div><div class="dir down">↓ STICK IN</div>
-      <div class="dir left">← SWING LEFT</div><div class="dir right">SWING RIGHT →</div>
-      <div class="knob"></div>
-    </div>
-    <div class="live" id="leftLive">Centered</div>
+  <div class="card joyCard left">
+    <div class="joyTitle blue">LEFT JOYSTICK</div><div class="joySub">Swing + Stick</div>
+    <div class="pad" id="lp"><div class="ring"></div><div class="v"></div><div class="h"></div><div class="dir up">STICK OUT ↑</div><div class="dir down">STICK IN ↓</div><div class="dir leftd">← SWING LEFT</div><div class="dir rightd">SWING RIGHT →</div><div class="knob"></div></div>
+    <div class="live" id="liveL">Centered</div>
   </div>
-
-  <div class="controlCard">
-    <div class="controlTitle">RIGHT JOYSTICK<span>Boom + Bucket</span></div>
-    <div class="pad" id="rightPad">
-      <div class="ring"></div><div class="crossV"></div><div class="crossH"></div>
-      <div class="dir up">BOOM DOWN ↑</div><div class="dir down">↓ BOOM UP</div>
-      <div class="dir left">← BUCKET CURL</div><div class="dir right">BUCKET DUMP →</div>
-      <div class="knob"></div>
-    </div>
-    <div class="live" id="rightLive">Centered</div>
+  <div class="card joyCard right">
+    <div class="joyTitle yellow">RIGHT JOYSTICK</div><div class="joySub">Boom + Bucket</div>
+    <div class="pad" id="rp"><div class="ring"></div><div class="v"></div><div class="h"></div><div class="dir up">BOOM DOWN ↑</div><div class="dir down">BOOM UP ↓</div><div class="dir leftd">← BUCKET CURL</div><div class="dir rightd">BUCKET DUMP →</div><div class="knob"></div></div>
+    <div class="live" id="liveR">Centered</div>
   </div>
 </section>
 
-<div class="bottom">
-  <button id="labels">Hide labels</button>
-  <button id="soilBtn">Refill soil</button>
+<div class="actions">
+  <button id="refill">⛰ Refill soil</button><button id="reset">↻ Reset scene</button>
+  <div class="tip">💡 <b>Realistic behavior:</b> joystick returns to center when released, but the excavator holds its position.</div>
 </div>
-<div class="tip"><b>Realistic behavior:</b> the joystick springs back to center when released, but the excavator attachment does not. Boom, stick, bucket and swing remain where you left them, just like hydraulic functions holding position.</div>
 </main>
 
 <script>
-const $=id=>document.getElementById(id),canvas=$('sim'),ctx=canvas.getContext('2d');
-let labels=true;
+const $=id=>document.getElementById(id);
 const joy={L:{x:0,y:0},R:{x:0,y:0}};
-const state={
- boom:-0.92,      // main boom angle
- stick:1.10,      // relative stick angle
- bucket:0.05,     // relative bucket angle
- swing:0,         // visual lateral offset in side view
- fill:0,truck:0,soil:1
-};
-const limits={boom:[-1.28,-0.28],stick:[0.48,1.72],bucket:[-0.95,1.0],swing:[-1,1]};
+const state={boom:.5,stick:.5,bucket:.18,swing:.5,load:0};
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
-function bindPad(id,key,liveId){
- const el=$(id),knob=el.querySelector('.knob'),live=$(liveId);
- let pid=null,cx=0,cy=0,lim=0;
- function update(e){
-   if(pid===null)return;
-   let dx=e.clientX-cx,dy=e.clientY-cy;
-   const mag=Math.hypot(dx,dy)||1;
-   if(mag>lim){dx*=lim/mag;dy*=lim/mag}
-   joy[key].x=dx/lim;joy[key].y=dy/lim;
-   knob.style.transform=`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px))`;
-
-   const dead=.16, parts=[];
-   if(key==='L'){
-     if(joy.L.x<-dead)parts.push('SWING LEFT');
-     if(joy.L.x>dead)parts.push('SWING RIGHT');
-     if(joy.L.y<-dead)parts.push('STICK OUT');
-     if(joy.L.y>dead)parts.push('STICK IN');
-   }else{
-     if(joy.R.x<-dead)parts.push('BUCKET CURL');
-     if(joy.R.x>dead)parts.push('BUCKET DUMP');
-     if(joy.R.y<-dead)parts.push('BOOM DOWN');
-     if(joy.R.y>dead)parts.push('BOOM UP');
-   }
-   live.innerHTML=parts.length?'<b>'+parts.join(' + ')+'</b>':'Centered';
-   $('lastInput').textContent=parts.length?parts.join(' + '):'No input';
- }
- el.addEventListener('pointerdown',e=>{
-   const r=el.getBoundingClientRect();cx=r.left+r.width/2;cy=r.top+r.height/2;lim=r.width*.31;
-   pid=e.pointerId;el.setPointerCapture(pid);el.classList.add('active');update(e);
- });
- el.addEventListener('pointermove',update);
- function end(e){
-   if(e.pointerId!==pid)return;pid=null;joy[key].x=joy[key].y=0;el.classList.remove('active');
-   knob.style.transform='translate(-50%,-50%)';live.textContent='Centered';
-   $('lastInput').textContent='No input';
- }
- el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+function bind(id,key,liveId){
+  const el=$(id),knob=el.querySelector('.knob'),live=$(liveId);
+  let pid=null,cx=0,cy=0,lim=0;
+  function mv(e){
+    if(pid===null)return;
+    let dx=e.clientX-cx,dy=e.clientY-cy;
+    const m=Math.hypot(dx,dy)||1;
+    if(m>lim){dx*=lim/m;dy*=lim/m}
+    joy[key].x=dx/lim;joy[key].y=dy/lim;
+    knob.style.transform=`translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px))`;
+    const d=.17,parts=[];
+    if(key==='L'){
+      if(joy.L.x<-d)parts.push('SWING LEFT');
+      if(joy.L.x>d)parts.push('SWING RIGHT');
+      if(joy.L.y<-d)parts.push('STICK OUT');
+      if(joy.L.y>d)parts.push('STICK IN');
+    }else{
+      if(joy.R.x<-d)parts.push('BUCKET CURL');
+      if(joy.R.x>d)parts.push('BUCKET DUMP');
+      if(joy.R.y<-d)parts.push('BOOM DOWN');
+      if(joy.R.y>d)parts.push('BOOM UP');
+    }
+    live.innerHTML=parts.length?'<b>'+parts.join(' + ')+'</b>':'Centered';
+    if(parts.length){
+      const cmd=parts.join(' + ');
+      $('last').textContent=cmd;
+      if(key==='L')$('ll').textContent=cmd; else $('rr').textContent=cmd;
+    }
+  }
+  el.addEventListener('pointerdown',e=>{let r=el.getBoundingClientRect();cx=r.left+r.width/2;cy=r.top+r.height/2;lim=r.width*.31;pid=e.pointerId;el.setPointerCapture(pid);mv(e)});
+  el.addEventListener('pointermove',mv);
+  function end(e){if(e.pointerId!==pid)return;pid=null;joy[key].x=joy[key].y=0;knob.style.transform='translate(-50%,-50%)';live.textContent='Centered'}
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
 }
-bindPad('leftPad','L','leftLive');bindPad('rightPad','R','rightLive');
+bind('lp','L','liveL');bind('rp','R','liveR');
 
-function geom(){
- const baseX=365+state.swing*115, baseY=382;
- const shoulder={x:baseX+38,y:baseY-105};
- const L1=230,L2=190;
- const elbow={x:shoulder.x+Math.cos(state.boom)*L1,y:shoulder.y+Math.sin(state.boom)*L1};
- const a2=state.boom+state.stick;
- const wrist={x:elbow.x+Math.cos(a2)*L2,y:elbow.y+Math.sin(a2)*L2};
- const ba=a2+state.bucket;
- const tooth={x:wrist.x+Math.cos(ba)*88,y:wrist.y+Math.sin(ba)*88};
- return {baseX,baseY,shoulder,elbow,wrist,ba,tooth,a2};
-}
+let prev=performance.now();
+function loop(t){
+  let dt=Math.min(.04,(t-prev)/1000);prev=t;
+  const d=.08;
+  const lx=Math.abs(joy.L.x)>d?joy.L.x:0, ly=Math.abs(joy.L.y)>d?joy.L.y:0;
+  const rx=Math.abs(joy.R.x)>d?joy.R.x:0, ry=Math.abs(joy.R.y)>d?joy.R.y:0;
+  const flow=!!(lx||ly||rx||ry);
 
-function physics(dt){
- const dead=.08;
- const Lx=Math.abs(joy.L.x)>dead?joy.L.x:0;
- const Ly=Math.abs(joy.L.y)>dead?joy.L.y:0;
- const Rx=Math.abs(joy.R.x)>dead?joy.R.x:0;
- const Ry=Math.abs(joy.R.y)>dead?joy.R.y:0;
+  state.swing=clamp(state.swing+lx*dt*.35,0,1);
+  state.stick=clamp(state.stick-ly*dt*.38,0,1);
+  state.bucket=clamp(state.bucket-rx*dt*.52,0,1);
+  state.boom=clamp(state.boom+ry*dt*.38,0,1);
 
- // Persistent hydraulic state:
- // input changes cylinder position; release = zero flow, NOT reset.
- state.swing=clamp(state.swing+Lx*dt*.35,...limits.swing);
- state.stick=clamp(state.stick+Ly*dt*.55,...limits.stick);       // up/forward negative => stick out
- state.bucket=clamp(state.bucket-Rx*dt*.92,...limits.bucket);    // left negative => curl positive
- state.boom=clamp(state.boom-Ry*dt*.48,...limits.boom);          // up/forward negative => boom down (angle less negative)
+  if(rx<-.25 && state.load<1) state.load=clamp(state.load+dt*.08*Math.abs(rx),0,1);
+  if(rx>.25 && state.load>0) state.load=clamp(state.load-dt*.12*Math.abs(rx),0,1);
 
- const active=Math.abs(Lx)+Math.abs(Ly)+Math.abs(Rx)+Math.abs(Ry)>.08;
- $('hyd').textContent=active?'Flowing':'Holding';
-
- const g=geom();
- const inSoil=g.tooth.x>600&&g.tooth.x<790&&g.tooth.y>385&&g.tooth.y<520;
- const overTruck=g.tooth.x>835&&g.tooth.x<1045&&g.tooth.y>255&&g.tooth.y<385;
-
- // Soil interaction: curl while teeth are in pile.
- if(inSoil && Rx<-.15 && state.soil>0 && state.fill<1){
-   const take=Math.min(state.soil,dt*.28*Math.abs(Rx));
-   state.fill=clamp(state.fill+take,0,1);
-   state.soil=clamp(state.soil-take*.42,0,1);
- }
- // Dump over truck.
- if(overTruck && Rx>.18 && state.fill>0){
-   const out=Math.min(state.fill,dt*.48*Math.abs(Rx));
-   state.fill-=out;state.truck+=out*2.2;
- }
- // Spillage if opening elsewhere.
- if(!overTruck && Rx>.28 && state.fill>0){
-   state.fill=Math.max(0,state.fill-dt*.22*Math.abs(Rx));
- }
- $('fill').textContent=Math.round(state.fill*100)+'%';
- $('truck').textContent=state.truck.toFixed(1)+' t';
+  $('hyd').textContent=flow?'Flowing':'Holding';
+  $('load').textContent=Math.round(state.load*100)+'%';
+  requestAnimationFrame(loop);
 }
-
-function rr(x,y,w,h,r,fill,stroke){
- ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);
- if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.stroke()}
-}
-function line(x1,y1,x2,y2,width,color){
- ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
-}
-function drawBackground(){
- const grad=ctx.createLinearGradient(0,0,0,560);grad.addColorStop(0,'#9fc9d8');grad.addColorStop(.58,'#c4d1c3');grad.addColorStop(.59,'#8d6a47');grad.addColorStop(1,'#4d3929');ctx.fillStyle=grad;ctx.fillRect(0,0,1100,560);
- // distant hills
- ctx.fillStyle='#58745b';ctx.beginPath();ctx.moveTo(0,315);ctx.quadraticCurveTo(150,245,300,315);ctx.quadraticCurveTo(455,235,610,310);ctx.quadraticCurveTo(780,240,950,310);ctx.lineTo(1100,300);ctx.lineTo(1100,400);ctx.lineTo(0,400);ctx.closePath();ctx.fill();
- ctx.fillStyle='#425f47';ctx.beginPath();ctx.moveTo(0,340);ctx.quadraticCurveTo(130,285,260,340);ctx.quadraticCurveTo(430,275,600,345);ctx.quadraticCurveTo(785,290,940,342);ctx.lineTo(1100,325);ctx.lineTo(1100,410);ctx.lineTo(0,410);ctx.closePath();ctx.fill();
- // soil pile
- const pileH=80*state.soil+25;
- ctx.fillStyle='#6e4b2e';ctx.beginPath();ctx.moveTo(585,440);ctx.quadraticCurveTo(690,440-pileH,800,440);ctx.lineTo(800,530);ctx.lineTo(585,530);ctx.closePath();ctx.fill();
- ctx.fillStyle='#805837';ctx.beginPath();ctx.moveTo(610,438);ctx.quadraticCurveTo(690,470-pileH,770,438);ctx.lineTo(770,455);ctx.lineTo(610,455);ctx.closePath();ctx.fill();
- // truck
- ctx.fillStyle='#272727';rr(850,360,190,78,8,'#2f3336');rr(835,292,170,76,6,'#d99b00','#111');
- ctx.fillStyle='#111';ctx.fillRect(850,310,45,28);ctx.fillStyle='#4b6e78';ctx.fillRect(853,313,39,22);
- ctx.fillStyle='#151515';ctx.beginPath();ctx.arc(885,448,25,0,Math.PI*2);ctx.arc(1000,448,25,0,Math.PI*2);ctx.fill();
- ctx.fillStyle='#444';ctx.beginPath();ctx.arc(885,448,10,0,Math.PI*2);ctx.arc(1000,448,10,0,Math.PI*2);ctx.fill();
-}
-function drawMachine(){
- const g=geom();
- // shadow
- ctx.fillStyle='#0005';ctx.beginPath();ctx.ellipse(g.baseX,465,145,23,0,0,Math.PI*2);ctx.fill();
- // tracks
- rr(g.baseX-135,420,260,58,26,'#181818','#393939');
- ctx.strokeStyle='#555';ctx.lineWidth=5;ctx.strokeRect(g.baseX-105,433,205,32);
- ctx.fillStyle='#303030';for(let i=0;i<7;i++){ctx.beginPath();ctx.arc(g.baseX-88+i*31,449,12,0,Math.PI*2);ctx.fill()}
- // undercarriage / slew
- rr(g.baseX-72,394,145,30,8,'#3c3c3c');ctx.fillStyle='#1b1b1b';ctx.beginPath();ctx.arc(g.baseX,401,28,0,Math.PI*2);ctx.fill();
- // body
- const bodyGrad=ctx.createLinearGradient(g.baseX-80,300,g.baseX+120,410);bodyGrad.addColorStop(0,'#f0b318');bodyGrad.addColorStop(.65,'#c78800');bodyGrad.addColorStop(1,'#9c6700');
- rr(g.baseX-75,305,175,92,15,bodyGrad,'#7b5400');
- // counterweight
- ctx.fillStyle='#d49500';ctx.beginPath();ctx.ellipse(g.baseX+90,350,55,50,0,0,Math.PI*2);ctx.fill();
- // cab
- ctx.fillStyle='#111';rr(g.baseX-62,286,68,94,9,'#161616','#2c2c2c');
- ctx.fillStyle='#34505c';ctx.beginPath();ctx.moveTo(g.baseX-53,298);ctx.lineTo(g.baseX-8,298);ctx.lineTo(g.baseX-1,337);ctx.lineTo(g.baseX-53,337);ctx.closePath();ctx.fill();
- ctx.fillStyle='#84aebd';ctx.globalAlpha=.22;ctx.fillRect(g.baseX-48,303,34,28);ctx.globalAlpha=1;
- // vents and details
- ctx.fillStyle='#4b3b17';for(let i=0;i<5;i++)ctx.fillRect(g.baseX+38+i*10,318,5,28);
- ctx.fillStyle='#111';ctx.font='bold 18px system-ui';ctx.fillText('LOVOL',g.baseX+24,374);
- // boom and stick with cylinders
- line(g.shoulder.x,g.shoulder.y,g.elbow.x,g.elbow.y,34,'#d89a00');
- line(g.shoulder.x,g.shoulder.y,g.elbow.x,g.elbow.y,22,'#efb019');
- line(g.elbow.x,g.elbow.y,g.wrist.x,g.wrist.y,28,'#d89a00');
- line(g.elbow.x,g.elbow.y,g.wrist.x,g.wrist.y,17,'#efb019');
- // hydraulic cylinders
- line(g.shoulder.x-5,g.shoulder.y-10,g.elbow.x-18,g.elbow.y-35,7,'#363636');
- line(g.shoulder.x-5,g.shoulder.y-10,g.elbow.x-18,g.elbow.y-35,3,'#bfc4c6');
- line(g.elbow.x+5,g.elbow.y-5,g.wrist.x-18,g.wrist.y-22,6,'#383838');
- line(g.elbow.x+5,g.elbow.y-5,g.wrist.x-18,g.wrist.y-22,2,'#c5c9ca');
- // joints
- ctx.fillStyle='#7e5700';for(const p of [g.shoulder,g.elbow,g.wrist]){ctx.beginPath();ctx.arc(p.x,p.y,12,0,Math.PI*2);ctx.fill();ctx.fillStyle='#2b2b2b';ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#7e5700'}
- // bucket
- ctx.save();ctx.translate(g.wrist.x,g.wrist.y);ctx.rotate(g.ba);
- const bg=ctx.createLinearGradient(0,-20,95,40);bg.addColorStop(0,'#df9d00');bg.addColorStop(1,'#8f6100');ctx.fillStyle=bg;ctx.strokeStyle='#654300';ctx.lineWidth=3;
- ctx.beginPath();ctx.moveTo(0,-16);ctx.lineTo(58,-13);ctx.lineTo(90,22);ctx.lineTo(68,49);ctx.lineTo(20,35);ctx.closePath();ctx.fill();ctx.stroke();
- // bucket teeth
- ctx.fillStyle='#5b4c32';for(let i=0;i<4;i++){ctx.fillRect(66+i*7,42,6,18)}
- // material inside
- if(state.fill>.02){ctx.fillStyle='#65462e';ctx.beginPath();ctx.ellipse(45,15,28,18,0,0,Math.PI*2);ctx.fill()}
- ctx.restore();
- // label chips
- if(labels){
-   chip('BOOM',(g.shoulder.x+g.elbow.x)/2-25,(g.shoulder.y+g.elbow.y)/2-25);
-   chip('STICK',(g.elbow.x+g.wrist.x)/2,(g.elbow.y+g.wrist.y)/2-25);
-   chip('BUCKET',g.wrist.x+35,g.wrist.y+48);
- }
-}
-function chip(t,x,y){
- ctx.font='bold 12px system-ui';const w=ctx.measureText(t).width+14;rr(x,y,w,23,5,'#f3b200');ctx.fillStyle='#111';ctx.fillText(t,x+7,y+16)
-}
-function draw(){
- drawBackground();drawMachine();
- // HUD
- rr(16,16,250,62,9,'#0c0c0ccc');ctx.fillStyle='#fff';ctx.font='bold 13px system-ui';ctx.fillText('REALISTIC HYDRAULIC STATE',29,40);ctx.font='12px system-ui';ctx.fillStyle='#bbb';ctx.fillText('Release joystick = machine holds',29,60);
-}
-$('resetMachine').onclick=()=>{Object.assign(state,{boom:-0.92,stick:1.10,bucket:.05,swing:0,fill:0});$('status').innerHTML='<strong>Reset.</strong> Machine returned to the starting pose.'};
-$('labels').onclick=()=>{labels=!labels;$('labels').textContent=labels?'Hide labels':'Show labels'};
-$('soilBtn').onclick=()=>{state.soil=1;$('status').innerHTML='<strong>Soil refilled.</strong> You can practice scooping again.'};
-
-let last=performance.now();
-function loop(now){const dt=Math.min(.035,(now-last)/1000);last=now;physics(dt);draw();requestAnimationFrame(loop)}
 requestAnimationFrame(loop);
+
+$('reset').onclick=()=>{Object.assign(state,{boom:.5,stick:.5,bucket:.18,swing:.5,load:0});$('last').textContent='—';$('ll').textContent='—';$('rr').textContent='—'};
+$('refill').onclick=()=>{$('load').textContent=Math.round(state.load*100)+'%'};
+
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
 </script>
 </body>
